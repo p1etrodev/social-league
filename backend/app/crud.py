@@ -15,6 +15,7 @@ def _counts_query():
     instead of comparing the outer row's columns to itself."""
     responses = aliased(Post)
     quotes = aliased(Post)
+    reposts = aliased(Post)
     responses_count = (
         select(func.count())
         .select_from(responses)
@@ -29,20 +30,28 @@ def _counts_query():
         .correlate(Post)
         .scalar_subquery()
     )
-    return responses_count, quotes_count
+    reposts_count = (
+        select(func.count())
+        .select_from(reposts)
+        .where(reposts.repost_of == Post.id)
+        .correlate(Post)
+        .scalar_subquery()
+    )
+    return responses_count, quotes_count, reposts_count
 
 
 def _select_posts():
-    responses_count, quotes_count = _counts_query()
+    responses_count, quotes_count, reposts_count = _counts_query()
     return select(
         Post,
         responses_count.label("responses_count"),
         quotes_count.label("quotes_count"),
+        reposts_count.label("reposts_count"),
     )
 
 
 def _row_to_dict(row) -> dict:
-    post, responses_count, quotes_count = row
+    post, responses_count, quotes_count, reposts_count = row
     return {
         "id": post.id,
         "created_at": post.created_at,
@@ -53,6 +62,7 @@ def _row_to_dict(row) -> dict:
         "repost_of": post.repost_of,
         "responses_count": responses_count,
         "quotes_count": quotes_count,
+        "reposts_count": reposts_count,
     }
 
 
@@ -124,6 +134,29 @@ async def list_quotes(
     return [_row_to_dict(r) for r in rows], count
 
 
+async def list_reposts(
+    db: AsyncSession,
+    *,
+    post_id: uuid.UUID | None = None,
+    champion_id: str | None = None,
+    limit: int,
+    offset: int,
+) -> tuple[list[dict], int]:
+    query = _select_posts().where(Post.repost_of.is_not(None))
+    count_query = select(func.count()).select_from(Post).where(Post.repost_of.is_not(None))
+    if post_id:
+        query = query.where(Post.repost_of == post_id)
+        count_query = count_query.where(Post.repost_of == post_id)
+    if champion_id:
+        query = query.where(Post.champion_id == champion_id)
+        count_query = count_query.where(Post.champion_id == champion_id)
+
+    query = query.order_by(Post.created_at.asc()).limit(limit).offset(offset)
+    rows = (await db.execute(query)).all()
+    count = (await db.execute(count_query)).scalar_one()
+    return [_row_to_dict(r) for r in rows], count
+
+
 async def create_post(
     db: AsyncSession,
     *,
@@ -131,12 +164,14 @@ async def create_post(
     content: str,
     response_of: uuid.UUID | None = None,
     quote_of: uuid.UUID | None = None,
+    repost_of: uuid.UUID | None = None,
 ) -> dict:
     post = Post(
         champion_id=champion_id,
         content=content,
         response_of=response_of,
         quote_of=quote_of,
+        repost_of=repost_of,
     )
     db.add(post)
     await db.commit()

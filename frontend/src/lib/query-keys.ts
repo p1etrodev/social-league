@@ -11,6 +11,8 @@ export const queryKeys = {
       [...queryKeys.champions.all, id, "responses", params ?? {}] as const,
     quotes: (id: string, params?: ListParams) =>
       [...queryKeys.champions.all, id, "quotes", params ?? {}] as const,
+    reposts: (id: string, params?: ListParams) =>
+      [...queryKeys.champions.all, id, "reposts", params ?? {}] as const,
   },
   posts: {
     all: ["posts"] as const,
@@ -21,5 +23,7 @@ export const queryKeys = {
       [...queryKeys.posts.all, id, "responses", params ?? {}] as const,
     quotes: (id: string, params?: ListParams) =>
       [...queryKeys.posts.all, id, "quotes", params ?? {}] as const,
+    reposts: (id: string, params?: ListParams) =>
+      [...queryKeys.posts.all, id, "reposts", params ?? {}] as const,
   },
 };

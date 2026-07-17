@@ -12,10 +12,14 @@ async def test_get_post_counts_only_direct_children(db_session):
     await crud.create_post(
         db_session, champion_id="lux", content="q1", quote_of=root["id"]
     )
+    await crud.create_post(
+        db_session, champion_id="jinx", content="", repost_of=root["id"]
+    )
 
     fetched = await crud.get_post(db_session, root["id"])
     assert fetched["responses_count"] == 2
     assert fetched["quotes_count"] == 1
+    assert fetched["reposts_count"] == 1
 
 
 async def test_counts_do_not_leak_across_unrelated_posts(db_session):
@@ -44,11 +48,14 @@ async def test_list_root_posts_excludes_responses_but_includes_quotes(db_session
     quote = await crud.create_post(
         db_session, champion_id="zed", content="quote", quote_of=root["id"]
     )
+    repost = await crud.create_post(
+        db_session, champion_id="lux", content="", repost_of=root["id"]
+    )
 
     posts, count = await crud.list_root_posts(db_session, None, 50, 0)
     ids = {p["id"] for p in posts}
-    assert count == 2
-    assert ids == {root["id"], quote["id"]}
+    assert count == 3
+    assert ids == {root["id"], quote["id"], repost["id"]}
 
 
 async def test_get_post_returns_none_for_missing_id(db_session):

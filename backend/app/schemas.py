@@ -34,6 +34,10 @@ class QuoteCreate(PostCreate):
     pass
 
 
+class RepostCreate(CamelModel):
+    champion_id: Annotated[str, Field(min_length=1, max_length=64)]
+
+
 class PostRead(CamelModel):
     id: UUID
     created_at: datetime
@@ -44,6 +48,7 @@ class PostRead(CamelModel):
     repost_of: UUID | None
     responses_count: int
     quotes_count: int
+    reposts_count: int
 
 
 class PostListRead(CamelModel):

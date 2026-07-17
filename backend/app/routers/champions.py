@@ -34,3 +34,13 @@ async def list_champion_quotes(
         db, champion_id=champion_id, limit=limit, offset=offset
     )
     return {"posts": quotes, "count": count}
+
+
+@router.get("/{champion_id}/reposts", response_model=PostListRead)
+async def list_champion_reposts(
+    champion_id: str, limit: int = 50, offset: int = 0, db: AsyncSession = Depends(get_db)
+):
+    reposts, count = await crud.list_reposts(
+        db, champion_id=champion_id, limit=limit, offset=offset
+    )
+    return {"posts": reposts, "count": count}

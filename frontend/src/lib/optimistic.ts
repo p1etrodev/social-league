@@ -15,6 +15,7 @@ export function buildOptimisticPost(
     repostOf: overrides.repostOf ?? null,
     responsesCount: 0,
     quotesCount: 0,
+    repostsCount: 0,
   };
 }
 

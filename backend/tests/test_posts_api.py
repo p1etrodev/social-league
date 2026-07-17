@@ -181,6 +181,56 @@ async def test_list_quotes_for_a_post(client):
     assert body["posts"][0]["id"] == quote.json()["id"]
 
 
+async def test_create_repost_increments_parent_reposts_count(client):
+    root = await _create_post(client)
+    r = await client.post(
+        f"/api/v1/posts/{root['id']}/reposts", json={"championId": "zed"}
+    )
+    assert r.status_code == 201
+    repost = r.json()
+    assert repost["repostOf"] == root["id"]
+    assert repost["content"] == ""
+
+    parent = (await client.get(f"/api/v1/posts/{root['id']}")).json()
+    assert parent["repostsCount"] == 1
+    assert parent["quotesCount"] == 0
+    assert parent["responsesCount"] == 0
+
+
+async def test_create_repost_on_nonexistent_post_returns_404(client):
+    r = await client.post(
+        "/api/v1/posts/00000000-0000-0000-0000-000000000000/reposts",
+        json={"championId": "zed"},
+    )
+    assert r.status_code == 404
+
+
+async def test_list_reposts_for_a_post(client):
+    root = await _create_post(client)
+    repost = await client.post(
+        f"/api/v1/posts/{root['id']}/reposts", json={"championId": "zed"}
+    )
+
+    r = await client.get(f"/api/v1/posts/{root['id']}/reposts")
+    body = r.json()
+    assert body["count"] == 1
+    assert body["posts"][0]["id"] == repost.json()["id"]
+
+
+async def test_list_posts_includes_standalone_reposts_as_root(client):
+    root = await _create_post(client, content="root post")
+    repost = await client.post(
+        f"/api/v1/posts/{root['id']}/reposts", json={"championId": "zed"}
+    )
+    assert repost.status_code == 201
+
+    r = await client.get("/api/v1/posts")
+    body = r.json()
+    ids = {p["id"] for p in body["posts"]}
+    assert body["count"] == 2
+    assert ids == {root["id"], repost.json()["id"]}
+
+
 async def test_list_champion_posts(client):
     await _create_post(client, champion_id="ahri", content="ahri root")
     ahri_post = await _create_post(client, champion_id="ahri", content="ahri root 2")

@@ -5,7 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
 from app.database import get_db
-from app.schemas import PostCreate, PostListRead, PostRead, QuoteCreate, ResponseCreate
+from app.schemas import (
+    PostCreate,
+    PostListRead,
+    PostRead,
+    QuoteCreate,
+    RepostCreate,
+    ResponseCreate,
+)
 from app.ws import manager
 
 router = APIRouter(prefix="/api/v1/posts", tags=["posts"])
@@ -96,3 +103,31 @@ async def create_quote(
     )
     await manager.broadcast({"event": "new_post", "postId": str(quote["id"])})
     return quote
+
+
+@router.get("/{post_id}/reposts", response_model=PostListRead)
+async def list_reposts(
+    post_id: uuid.UUID,
+    limit: int = 50,
+    offset: int = 0,
+    db: AsyncSession = Depends(get_db),
+):
+    if not await crud.get_post(db, post_id):
+        raise HTTPException(status_code=404, detail="Post not found")
+    reposts, count = await crud.list_reposts(
+        db, post_id=post_id, limit=limit, offset=offset
+    )
+    return {"posts": reposts, "count": count}
+
+
+@router.post("/{post_id}/reposts", response_model=PostRead, status_code=201)
+async def create_repost(
+    post_id: uuid.UUID, payload: RepostCreate, db: AsyncSession = Depends(get_db)
+):
+    if not await crud.get_post(db, post_id):
+        raise HTTPException(status_code=404, detail="Post not found")
+    repost = await crud.create_post(
+        db, champion_id=payload.champion_id, content="", repost_of=post_id
+    )
+    await manager.broadcast({"event": "new_post", "postId": str(repost["id"])})
+    return repost
