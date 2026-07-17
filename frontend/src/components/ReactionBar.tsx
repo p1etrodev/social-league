@@ -24,7 +24,7 @@ export function ReactionBar({ postId }: { postId: string }) {
             onClick={() => toggle(emoji)}
             title={LABELS[emoji]}
             className={`flex items-center gap-1 rounded px-2 py-0.5 ${
-              mine ? "bg-primary/20 text-primary" : "text-muted hover:text-primary"
+              mine ? "bg-secondary/15 text-secondary" : "text-muted hover:text-secondary"
             }`}
           >
             <span>{emoji}</span>

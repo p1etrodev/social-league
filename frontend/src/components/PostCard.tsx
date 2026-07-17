@@ -38,7 +38,7 @@ export function PostCard({ post }: { post: Post }) {
             championId={post.championId}
             alt={post.championId}
             size={20}
-            className="size-5 rounded-full"
+            className="size-5 rounded-full ring-2 ring-primary/40"
           />
           <span>{champion?.name ?? post.championId} reposteó</span>
           <span>· {relativeDate(post.createdAt)}</span>
@@ -57,7 +57,7 @@ export function PostCard({ post }: { post: Post }) {
           championId={post.championId}
           alt={post.championId}
           size={48}
-          className="size-12 rounded-full"
+          className="size-12 rounded-full ring-2 ring-primary/40"
         />
       </Link>
       <div className="flex flex-1 flex-col gap-1">
