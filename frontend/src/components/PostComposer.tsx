@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import type { ChampionSummary } from "@/lib/data-dragon";
 import type { NewPostInput } from "@/lib/api";
+import { useLastChampion } from "@/hooks/useLastChampion";
 import { ChampionSelect } from "./ChampionSelect";
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function PostComposer({ placeholder, buttonLabel, isPending, onSubmit, className }: Props) {
-  const [champion, setChampion] = useState<ChampionSummary | null>(null);
+  const [champion, setChampion] = useLastChampion();
   const [content, setContent] = useState("");
 
   function handleSubmit(event: FormEvent) {

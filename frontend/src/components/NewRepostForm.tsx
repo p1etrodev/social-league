@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import type { ChampionSummary } from "@/lib/data-dragon";
 import type { Post } from "@/lib/api";
 import { useCreateRepost } from "@/hooks/useCreateRepost";
+import { useLastChampion } from "@/hooks/useLastChampion";
 import { ChampionSelect } from "./ChampionSelect";
 import { PostCard } from "./PostCard";
 
 export function NewRepostForm({ post, onClose }: { post: Post; onClose: () => void }) {
   const createRepost = useCreateRepost(post.id);
-  const [champion, setChampion] = useState<ChampionSummary | null>(null);
+  const [champion, setChampion] = useLastChampion();
 
   function handleRepost() {
     if (!champion) return;
