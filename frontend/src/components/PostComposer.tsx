@@ -34,14 +34,14 @@ export function PostComposer({ placeholder, buttonLabel, isPending, onSubmit, cl
         placeholder={placeholder}
         maxLength={280}
         rows={3}
-        className="resize-none rounded bg-extra/20 p-3 text-paper outline-none placeholder:text-muted"
+        className="resize-none bg-transparent pt-2 text-paper outline-none placeholder:text-muted"
       />
       <div className="flex items-center justify-between">
         <ChampionSelect value={champion} onChange={setChampion} />
         <button
           type="submit"
           disabled={!champion || !content.trim() || isPending}
-          className="rounded bg-primary px-4 py-2 font-bold text-dark disabled:opacity-50"
+          className="rounded-full bg-gradient-to-br from-primary-bright to-primary px-5 py-2 font-black tracking-wide text-dark disabled:opacity-50"
         >
           {buttonLabel}
         </button>

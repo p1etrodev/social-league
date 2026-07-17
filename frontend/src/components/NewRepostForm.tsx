@@ -34,7 +34,7 @@ export function NewRepostForm({ post, onClose }: { post: Post; onClose: () => vo
           type="button"
           onClick={handleRepost}
           disabled={!champion || createRepost.isPending}
-          className="rounded bg-primary px-4 py-2 font-bold text-dark disabled:opacity-50"
+          className="rounded-full bg-gradient-to-br from-primary-bright to-primary px-5 py-2 font-black tracking-wide text-dark disabled:opacity-50"
         >
           Repostear
         </button>
