@@ -1,11 +1,13 @@
 "use client";
 
 import { usePosts } from "@/hooks/usePosts";
+import { useNewPostsBanner } from "@/hooks/useNewPostsBanner";
 import { NewPostForm } from "@/components/NewPostForm";
 import { PostCard } from "@/components/PostCard";
 
 export function HomeFeed() {
   const { data, isLoading } = usePosts();
+  const { newCount, showNewPosts } = useNewPostsBanner();
   // The API orders oldest-first (append-friendly for the backend); the feed
   // wants newest-first, so we only flip the order for display.
   const posts = data ? [...data.posts].reverse() : [];
@@ -13,6 +15,15 @@ export function HomeFeed() {
   return (
     <div className="flex flex-1 flex-col">
       <NewPostForm />
+      {newCount > 0 && (
+        <button
+          type="button"
+          onClick={showNewPosts}
+          className="border-b border-extra bg-primary/10 p-3 text-center font-bold text-primary hover:bg-primary/20"
+        >
+          Mostrar {newCount} publicaciones nuevas
+        </button>
+      )}
       {isLoading && <p className="p-4 text-muted">Cargando...</p>}
       {data && posts.length === 0 && (
         <p className="p-4 text-muted">Todavía no hay posts. ¡Sé el primero!</p>
