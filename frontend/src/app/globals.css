@@ -68,6 +68,22 @@
     0 0 40px rgba(76, 211, 255, 0.18);
 }
 
+.panel {
+  background: rgba(19, 34, 58, 0.72);
+  border: 1px solid rgba(148, 168, 199, 0.12);
+  border-radius: 14px;
+  box-shadow:
+    0 14px 32px -14px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(216, 180, 92, 0.06);
+  backdrop-filter: blur(4px);
+}
+
+.panel-hover:hover {
+  box-shadow:
+    0 22px 46px -16px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(216, 180, 92, 0.24);
+}
+
 body {
   background-color: var(--color-dark);
   color: var(--color-paper);
