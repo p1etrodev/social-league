@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { championsQueryOptions } from "@/hooks/useChampions";
+import { getQueryClient } from "@/lib/query-client";
+import { ChampionsGrid } from "./ChampionsGrid";
 
 export const metadata: Metadata = {
   title: "Campeones",
@@ -6,10 +10,13 @@ export const metadata: Metadata = {
     "Explorá todos los campeones de League of Legends y descubrí lo que se está diciendo de cada uno en Social League.",
 };
 
-export default function ChampionsPage() {
+export default async function ChampionsPage() {
+  const queryClient = getQueryClient();
+  await queryClient.prefetchQuery(championsQueryOptions());
+
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <p className="text-muted">Listado de campeones — próximamente.</p>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ChampionsGrid />
+    </HydrationBoundary>
   );
 }
