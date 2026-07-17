@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { championQueryOptions } from "@/hooks/useChampion";
+import { championPostsQueryOptions } from "@/hooks/useChampionPosts";
 import { getQueryClient } from "@/lib/query-client";
 import { isNotFoundError } from "@/lib/errors";
 import { ChampionView } from "./ChampionView";
@@ -38,6 +39,11 @@ export default async function ChampionProfilePage({ params }: Props) {
     if (isNotFoundError(error)) notFound();
     throw error;
   }
+
+  // "Publicaciones" is the tab that's active by default, so it's the only
+  // one worth prefetching here -- responses/skins/skills only get fetched
+  // once the user actually clicks into them.
+  await queryClient.prefetchQuery(championPostsQueryOptions(id));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
