@@ -21,34 +21,37 @@ const TRENDING_ICON = (
 export function Navbar() {
   return (
     <>
-      <nav className="hidden w-full max-w-60 shrink-0 flex-col gap-1 bg-dark sm:flex sm:sticky top-0">
-        <Link href="/" className="flex items-center gap-4 p-4 text-primary">
-          <Image src="/jungle.png" alt="Social League" width={24} height={27} />
+      <nav className="hidden w-full max-w-60 shrink-0 flex-col gap-1 border-r border-extra/20 bg-surface/60 backdrop-blur-sm sm:flex sm:sticky top-0">
+        <Link
+          href="/"
+          className="flex items-center gap-4 border-b border-extra/20 p-4 text-primary-bright"
+        >
+          <Image src="/logo.png" alt="Social League" width={24} height={27} />
           <h1 className="font-heading text-2xl font-black">Social League</h1>
         </Link>
         <Link
           href="/"
-          className="flex items-center gap-4 border-b-2 border-transparent p-4 font-black text-primary hover:border-primary"
+          className="flex items-center gap-4 border-l-2 border-transparent p-4 font-black text-primary hover:border-primary hover:bg-primary/8"
         >
           {HOME_ICON}
           <span>Inicio</span>
         </Link>
         <Link
           href="/champions"
-          className="flex items-center gap-4 border-b-2 border-transparent p-4 font-black text-primary hover:border-primary"
+          className="flex items-center gap-4 border-l-2 border-transparent p-4 font-black text-primary hover:border-primary hover:bg-primary/8"
         >
           <Image src="/champion-icon.png" alt="" width={24} height={24} />
           <span>Campeones</span>
         </Link>
         <Link
           href="/trending"
-          className="flex items-center gap-4 border-b-2 border-transparent p-4 font-black text-primary hover:border-primary"
+          className="flex items-center gap-4 border-l-2 border-transparent p-4 font-black text-primary hover:border-primary hover:bg-primary/8"
         >
           {TRENDING_ICON}
           <span>Tendencias</span>
         </Link>
       </nav>
-      <nav className="fixed inset-x-0 bottom-0 flex justify-around bg-dark py-2 sm:hidden">
+      <nav className="fixed inset-x-0 bottom-0 flex justify-around border-t border-extra/20 bg-surface/90 py-2 backdrop-blur-sm sm:hidden">
         <Link href="/" className="p-2 text-primary">
           {HOME_ICON}
         </Link>

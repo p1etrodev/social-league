@@ -1,22 +1,22 @@
 import "./globals.css";
 
-import { Mukta_Vaani, Roboto } from "next/font/google";
+import { Cinzel, Manrope } from "next/font/google";
 import { siteDescription, siteName, siteUrl } from "@/lib/site";
 
 import type { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
 import { Providers } from "./providers";
 
-const muktaVaani = Mukta_Vaani({
-  variable: "--font-mukta-vaani",
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -46,13 +46,13 @@ export const metadata: Metadata = {
     title: siteName,
     description: siteDescription,
     locale: "es_AR",
-    images: [{ url: "/jungle.png", width: 436, height: 491, alt: siteName }],
+    images: [{ url: "/logo.png", width: 436, height: 491, alt: siteName }],
   },
   twitter: {
     card: "summary",
     title: siteName,
     description: siteDescription,
-    images: ["/jungle.png"],
+    images: ["/logo.png"],
   },
 };
 
@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${muktaVaani.variable} ${roboto.variable} h-full antialiased`}>
+    <html lang="es" className={`${cinzel.variable} ${manrope.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
           <div className="flex min-h-full flex-1 flex-row justify-center">

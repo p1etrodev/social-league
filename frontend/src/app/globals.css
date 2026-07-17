@@ -1,21 +1,58 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #c0a670;
-  --color-secondary: #1e9288;
-  --color-extra: #604f32;
-  --color-dark: #030c14;
-  --color-muted: #7a7974;
-  --color-paper: #f7f7f7;
+  --color-primary: #d8b45c;
+  --color-primary-bright: #f3d488;
+  --color-secondary: #37b6ac;
+  --color-secondary-dim: #1c4d49;
+  --color-extra: #7a6636;
+  --color-dark: #050a14;
+  --color-surface: #0d1a2e;
+  --color-surface-raised: #16273f;
+  --color-muted: #8b96ab;
+  --color-paper: #eef2f8;
 
-  --font-heading: var(--font-mukta-vaani);
-  --font-body: var(--font-roboto);
+  --font-heading: var(--font-cinzel);
+  --font-body: var(--font-manrope);
+
+  --animate-reveal-up: reveal-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 body {
   background-color: var(--color-dark);
   color: var(--color-paper);
   font-family: var(--font-body);
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Ambient corner glow behind the whole app, matching the loading-screen/
+   hextech reference in the design doc. Fixed and non-interactive so it
+   never affects layout or scrolling. (A repeating diagonal "fog of war"
+   texture was tried here too, but tiling two full-viewport diagonal
+   gradients was expensive enough to noticeably stall rendering -- a plain
+   radial glow gets the same ambient-lighting effect much more cheaply.) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px 620px at 88% -8%, rgba(216, 180, 92, 0.14), transparent 60%),
+    radial-gradient(900px 520px at -8% 106%, rgba(55, 182, 172, 0.09), transparent 60%),
+    linear-gradient(180deg, #03060d 0%, #060f1d 45%, #050a14 100%);
 }
 
 img {
