@@ -177,6 +177,22 @@ async def list_trending(db: AsyncSession, *, since: datetime, limit: int) -> lis
     return [_row_to_dict(r) for r in rows]
 
 
+async def list_champion_streak(db: AsyncSession, *, since: datetime, limit: int) -> list[dict]:
+    """Champions ranked by how many posts (root posts, responses, quotes,
+    reposts alike -- any action counts as activity) they've authored since
+    `since`. There's no local champion table, so this is a plain GROUP BY
+    over the free-text champion_id column."""
+    query = (
+        select(Post.champion_id, func.count().label("activity"))
+        .where(Post.created_at >= since)
+        .group_by(Post.champion_id)
+        .order_by(func.count().desc())
+        .limit(limit)
+    )
+    rows = (await db.execute(query)).all()
+    return [{"champion_id": champion_id, "activity": activity} for champion_id, activity in rows]
+
+
 async def toggle_reaction(
     db: AsyncSession, *, post_id: uuid.UUID, anon_id: str, emoji: ReactionEmoji
 ) -> None:

@@ -76,3 +76,12 @@ class ReactionToggle(CamelModel):
 class ReactionSummary(CamelModel):
     counts: dict[str, int]
     mine: list[str]
+
+
+class ChampionStreak(CamelModel):
+    champion_id: str
+    activity: int
+
+
+class ChampionStreakList(CamelModel):
+    champions: list[ChampionStreak]
