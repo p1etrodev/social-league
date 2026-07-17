@@ -1,4 +1,4 @@
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+import { apiClient } from "./axios";
 
 export type Post = {
   id: string;
@@ -12,12 +12,82 @@ export type Post = {
   quotesCount: number;
 };
 
-export async function getPost(id: string): Promise<Post | null> {
-  const res = await fetch(`${apiUrl}/api/v1/posts/${id}`, { cache: "no-store" });
-  // Only a real 404 from the API means "this post doesn't exist" -- any
-  // other failure (backend down, 5xx) should surface as a real error
-  // instead of being silently treated as not-found.
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`Failed to fetch post ${id}: ${res.status}`);
-  return res.json();
+export type PostList = {
+  posts: Post[];
+  count: number;
+};
+
+export type ListParams = {
+  limit?: number;
+  offset?: number;
+};
+
+export type NewPostInput = {
+  championId: string;
+  content: string;
+};
+
+export async function fetchPost(id: string): Promise<Post> {
+  const { data } = await apiClient.get<Post>(`/api/v1/posts/${id}`);
+  return data;
+}
+
+export async function fetchPosts(params?: ListParams & { championId?: string }): Promise<PostList> {
+  const { data } = await apiClient.get<PostList>("/api/v1/posts", { params });
+  return data;
+}
+
+export async function fetchPostResponses(id: string, params?: ListParams): Promise<PostList> {
+  const { data } = await apiClient.get<PostList>(`/api/v1/posts/${id}/responses`, { params });
+  return data;
+}
+
+export async function fetchPostQuotes(id: string, params?: ListParams): Promise<PostList> {
+  const { data } = await apiClient.get<PostList>(`/api/v1/posts/${id}/quotes`, { params });
+  return data;
+}
+
+export async function fetchChampionPosts(
+  championId: string,
+  params?: ListParams,
+): Promise<PostList> {
+  const { data } = await apiClient.get<PostList>(`/api/v1/champions/${championId}/posts`, {
+    params,
+  });
+  return data;
+}
+
+export async function fetchChampionResponses(
+  championId: string,
+  params?: ListParams,
+): Promise<PostList> {
+  const { data } = await apiClient.get<PostList>(`/api/v1/champions/${championId}/responses`, {
+    params,
+  });
+  return data;
+}
+
+export async function fetchChampionQuotes(
+  championId: string,
+  params?: ListParams,
+): Promise<PostList> {
+  const { data } = await apiClient.get<PostList>(`/api/v1/champions/${championId}/quotes`, {
+    params,
+  });
+  return data;
+}
+
+export async function createPost(input: NewPostInput): Promise<Post> {
+  const { data } = await apiClient.post<Post>("/api/v1/posts", input);
+  return data;
+}
+
+export async function createResponse(postId: string, input: NewPostInput): Promise<Post> {
+  const { data } = await apiClient.post<Post>(`/api/v1/posts/${postId}/responses`, input);
+  return data;
+}
+
+export async function createQuote(postId: string, input: NewPostInput): Promise<Post> {
+  const { data } = await apiClient.post<Post>(`/api/v1/posts/${postId}/quotes`, input);
+  return data;
 }

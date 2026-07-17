@@ -1,4 +1,6 @@
-const DDRAGON_BASE = "https://ddragon.leagueoflegends.com";
+import { isAxiosError } from "axios";
+import { ddragonClient } from "./axios";
+import { NotFoundError } from "./errors";
 
 export type ChampionSummary = {
   id: string;
@@ -7,30 +9,43 @@ export type ChampionSummary = {
   blurb: string;
 };
 
-async function getLatestVersion(): Promise<string> {
-  const res = await fetch(`${DDRAGON_BASE}/realms/las.json`, {
-    next: { revalidate: 3600 },
-  });
-  if (!res.ok) throw new Error("Failed to fetch Data Dragon version");
-  const data = await res.json();
+export async function fetchLatestVersion(): Promise<string> {
+  const { data } = await ddragonClient.get("/realms/las.json");
   return data.dd as string;
 }
 
-export async function getChampionSummary(championId: string): Promise<ChampionSummary | null> {
-  const version = await getLatestVersion();
-  const res = await fetch(`${DDRAGON_BASE}/cdn/${version}/data/es_AR/champion/${championId}.json`, {
-    next: { revalidate: 3600 },
-  });
-  if (!res.ok) return null;
+export async function fetchChampions(): Promise<ChampionSummary[]> {
+  const version = await fetchLatestVersion();
+  const { data } = await ddragonClient.get(`/cdn/${version}/data/es_AR/champion.json`);
+  return Object.values(data.data) as ChampionSummary[];
+}
 
-  const data = await res.json();
-  const champion = data.data?.[championId];
-  if (!champion) return null;
+export async function fetchChampion(championId: string): Promise<ChampionSummary> {
+  const version = await fetchLatestVersion();
+
+  let data: { data?: Record<string, unknown> };
+  try {
+    ({ data } = await ddragonClient.get(`/cdn/${version}/data/es_AR/champion/${championId}.json`));
+  } catch (error) {
+    // Data Dragon's S3-backed CDN returns 403 AccessDenied (not 404) for a
+    // champion id that doesn't exist as a static file.
+    if (isAxiosError(error) && (error.response?.status === 403 || error.response?.status === 404)) {
+      throw new NotFoundError(`Champion ${championId} not found`);
+    }
+    throw error;
+  }
+
+  const champion = data.data?.[championId] as
+    | { id: string; name: string; title: string; blurb: string }
+    | undefined;
+  if (!champion) {
+    throw new NotFoundError(`Champion ${championId} not found in Data Dragon ${version}`);
+  }
 
   return {
-    id: champion.id as string,
-    name: champion.name as string,
-    title: champion.title as string,
-    blurb: champion.blurb as string,
+    id: champion.id,
+    name: champion.name,
+    title: champion.title,
+    blurb: champion.blurb,
   };
 }

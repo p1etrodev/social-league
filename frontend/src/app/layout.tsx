@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mukta_Vaani, Roboto } from "next/font/google";
 import { siteDescription, siteName, siteUrl } from "@/lib/site";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const muktaVaani = Mukta_Vaani({
@@ -59,7 +60,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${muktaVaani.variable} ${roboto.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

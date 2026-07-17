@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPost } from "@/lib/api";
+import { postQueryOptions } from "@/hooks/usePost";
+import { getQueryClient } from "@/lib/query-client";
+import { isNotFoundError } from "@/lib/errors";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -8,20 +10,28 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const post = await getPost(id);
-  if (!post) return { title: "Post no encontrado" };
-
-  const excerpt = post.content.slice(0, 40);
-  return {
-    title: `Citas de "${excerpt}"`,
-    description: `Todas las citas del post: ${post.content.slice(0, 120)}`,
-  };
+  try {
+    const post = await getQueryClient().fetchQuery(postQueryOptions(id));
+    const excerpt = post.content.slice(0, 40);
+    return {
+      title: `Citas de "${excerpt}"`,
+      description: `Todas las citas del post: ${post.content.slice(0, 120)}`,
+    };
+  } catch (error) {
+    if (isNotFoundError(error)) return { title: "Post no encontrado" };
+    throw error;
+  }
 }
 
 export default async function PostQuotesPage({ params }: Props) {
   const { id } = await params;
-  const post = await getPost(id);
-  if (!post) notFound();
+
+  try {
+    await getQueryClient().fetchQuery(postQueryOptions(id));
+  } catch (error) {
+    if (isNotFoundError(error)) notFound();
+    throw error;
+  }
 
   return (
     <div className="flex flex-1 items-center justify-center">
