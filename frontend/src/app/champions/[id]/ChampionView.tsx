@@ -66,6 +66,9 @@ export function ChampionView({ id }: { id: string }) {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark/40 via-dark/80 to-dark" />
         </div>
+        <span className="pointer-events-none absolute top-0 right-2 font-heading text-8xl font-black text-paper/10 select-none">
+          {champion.name.slice(0, 2).toUpperCase()}
+        </span>
         <div className="flex flex-col gap-4 px-4 sm:flex-row">
           <div className="relative aspect-[308/560] w-full max-w-56 overflow-hidden rounded">
             <Image
@@ -95,7 +98,7 @@ export function ChampionView({ id }: { id: string }) {
           </div>
         </div>
 
-        <div className="relative z-10 mx-4 -mb-14 mt-4 flex items-center gap-5 rounded-lg border border-extra/30 bg-surface-raised p-4 shadow-lg sm:-mb-6">
+        <div className="panel relative z-10 mx-4 -mb-14 mt-4 flex items-center gap-5 p-4 sm:-mb-6">
           <div
             className="flex size-19 shrink-0 items-center justify-center rounded-full"
             style={{
