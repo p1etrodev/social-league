@@ -21,7 +21,7 @@ export function ChampionSpells({ passive, spells }: { passive: Spell; spells: Sp
   if (!version) return null;
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="panel flex flex-col gap-4 p-4">
       <div className="flex gap-2">
         {entries.map((entry) => {
           const isUltimate = entry.key === "R";

@@ -25,7 +25,7 @@ export function ChampionSkins({ championId, skins }: { championId: string; skins
   if (visibleSkins.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-3 p-4">
+    <div className="panel flex flex-col gap-3 p-4">
       <div className="relative aspect-video w-full overflow-hidden rounded bg-extra/20">
         <Image
           src={championSplashUrl(championId, current)}
