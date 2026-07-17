@@ -8,6 +8,8 @@ import { useChampionResponses } from "@/hooks/useChampionResponses";
 import { championLoadingUrl, championSplashUrl } from "@/lib/data-dragon";
 import { toIdentifier } from "@/lib/format";
 import { tagLabel } from "@/lib/tags";
+import { EmptyState } from "@/components/EmptyState";
+import { Loading } from "@/components/Loading";
 import { PostCard } from "@/components/PostCard";
 import { StatRating } from "@/components/StatRating";
 import { ChampionSkins } from "@/components/ChampionSkins";
@@ -24,18 +26,20 @@ type Tab = (typeof TABS)[number]["key"];
 
 function PostsTab({ championId }: { championId: string }) {
   const { data, isLoading } = useChampionPosts(championId);
-  if (isLoading) return <p className="p-4 text-muted">Cargando...</p>;
+  if (isLoading) return <Loading />;
   if (data?.posts.length === 0) {
-    return <p className="p-4 text-muted">Todavía no tiene publicaciones.</p>;
+    return <EmptyState title="Sin publicaciones" message="Todavía no tiene publicaciones." />;
   }
   return data?.posts.map((post) => <PostCard key={post.id} post={post} />);
 }
 
 function ResponsesTab({ championId }: { championId: string }) {
   const { data, isLoading } = useChampionResponses(championId);
-  if (isLoading) return <p className="p-4 text-muted">Cargando...</p>;
+  if (isLoading) return <Loading />;
   if (data?.posts.length === 0) {
-    return <p className="p-4 text-muted">Todavía no respondió a ninguna publicación.</p>;
+    return (
+      <EmptyState title="Sin respuestas" message="Todavía no respondió a ninguna publicación." />
+    );
   }
   return data?.posts.map((response) => <PostCard key={response.id} post={response} />);
 }

@@ -2,6 +2,8 @@
 
 import { usePost } from "@/hooks/usePost";
 import { usePostReposts } from "@/hooks/usePostReposts";
+import { EmptyState } from "@/components/EmptyState";
+import { Loading } from "@/components/Loading";
 import { PostCard } from "@/components/PostCard";
 
 export function RepostsView({ id }: { id: string }) {
@@ -14,9 +16,9 @@ export function RepostsView({ id }: { id: string }) {
 
       <h2 className="border-b border-extra p-4 text-sm font-bold text-muted">Reposts</h2>
 
-      {isLoading && <p className="p-4 text-muted">Cargando...</p>}
+      {isLoading && <Loading />}
       {reposts?.posts.length === 0 && (
-        <p className="p-4 text-muted">Todavía nadie reposteó este post.</p>
+        <EmptyState title="Sin reposts" message="Todavía nadie reposteó este post." />
       )}
       {reposts?.posts.map((repost) => (
         <PostCard key={repost.id} post={repost} />

@@ -2,6 +2,8 @@
 
 import { usePosts } from "@/hooks/usePosts";
 import { useNewPostsBanner } from "@/hooks/useNewPostsBanner";
+import { EmptyState } from "@/components/EmptyState";
+import { Loading } from "@/components/Loading";
 import { NewPostForm } from "@/components/NewPostForm";
 import { PostCard } from "@/components/PostCard";
 
@@ -24,9 +26,9 @@ export function HomeFeed() {
           Mostrar {newCount} publicaciones nuevas
         </button>
       )}
-      {isLoading && <p className="p-4 text-muted">Cargando...</p>}
+      {isLoading && <Loading />}
       {data && posts.length === 0 && (
-        <p className="p-4 text-muted">Todavía no hay posts. ¡Sé el primero!</p>
+        <EmptyState title="Todavía no hay posts" message="¡Sé el primero!" />
       )}
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />

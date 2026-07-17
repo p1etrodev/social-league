@@ -1,6 +1,8 @@
 "use client";
 
 import { useTrendingPosts } from "@/hooks/useTrendingPosts";
+import { EmptyState } from "@/components/EmptyState";
+import { Loading } from "@/components/Loading";
 import { PostCard } from "@/components/PostCard";
 
 export function TrendingView() {
@@ -12,9 +14,12 @@ export function TrendingView() {
         Tendencias de las últimas 24hs
       </h1>
 
-      {isLoading && <p className="p-4 text-muted">Cargando...</p>}
+      {isLoading && <Loading />}
       {data?.posts.length === 0 && (
-        <p className="p-4 text-muted">Todavía no hay suficiente actividad hoy.</p>
+        <EmptyState
+          title="Todavía no hay tendencias"
+          message="Todavía no hay suficiente actividad hoy."
+        />
       )}
       {data?.posts.map((post) => (
         <PostCard key={post.id} post={post} />

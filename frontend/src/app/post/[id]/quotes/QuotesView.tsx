@@ -2,6 +2,8 @@
 
 import { usePost } from "@/hooks/usePost";
 import { usePostQuotes } from "@/hooks/usePostQuotes";
+import { EmptyState } from "@/components/EmptyState";
+import { Loading } from "@/components/Loading";
 import { PostCard } from "@/components/PostCard";
 
 export function QuotesView({ id }: { id: string }) {
@@ -14,9 +16,9 @@ export function QuotesView({ id }: { id: string }) {
 
       <h2 className="border-b border-extra p-4 text-sm font-bold text-muted">Citas</h2>
 
-      {isLoading && <p className="p-4 text-muted">Cargando...</p>}
+      {isLoading && <Loading />}
       {quotes?.posts.length === 0 && (
-        <p className="p-4 text-muted">Todavía nadie citó este post.</p>
+        <EmptyState title="Sin citas" message="Todavía nadie citó este post." />
       )}
       {quotes?.posts.map((quote) => (
         <PostCard key={quote.id} post={quote} />
