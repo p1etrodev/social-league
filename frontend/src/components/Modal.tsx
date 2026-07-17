@@ -28,7 +28,7 @@ export function Modal({ onClose, children }: Props) {
         // outside a normal overlay would.
         if (e.target === ref.current) ref.current?.close();
       }}
-      className="fixed inset-0 m-auto max-h-[85vh] w-full max-w-lg overflow-y-auto rounded bg-dark p-0 text-paper ring-1 ring-extra backdrop:bg-dark/80"
+      className="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[85vh] w-full max-w-none animate-reveal-up overflow-y-auto rounded-t-2xl rounded-b-none bg-surface-raised p-0 text-paper ring-1 ring-extra backdrop:bg-dark/80 sm:inset-0 sm:m-auto sm:max-w-lg sm:rounded-2xl"
     >
       {children}
     </dialog>
