@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mukta_Vaani, Roboto } from "next/font/google";
 import { siteDescription, siteName, siteUrl } from "@/lib/site";
+import { Navbar } from "@/components/Navbar";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -61,7 +62,12 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${muktaVaani.variable} ${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Providers>{children}</Providers>
+        <Providers>
+          <div className="flex min-h-full flex-1">
+            <Navbar />
+            <main className="flex flex-1 flex-col pb-16 sm:pb-0">{children}</main>
+          </div>
+        </Providers>
       </body>
     </html>
   );

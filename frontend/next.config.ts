@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  images: {
+    remotePatterns: [new URL("https://ddragon.leagueoflegends.com/cdn/**")],
+  },
 };
 
 export default nextConfig;

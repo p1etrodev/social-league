@@ -49,3 +49,9 @@ export async function fetchChampion(championId: string): Promise<ChampionSummary
     blurb: champion.blurb,
   };
 }
+
+const DDRAGON_CDN = "https://ddragon.leagueoflegends.com";
+
+export function championIconUrl(version: string, championId: string): string {
+  return `${DDRAGON_CDN}/cdn/${version}/img/champion/${championId}.png`;
+}
