@@ -1,17 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { championQueryOptions } from "@/hooks/useChampion";
 import type { Post } from "@/lib/api";
 import { relativeDate, toIdentifier } from "@/lib/format";
 import { ChampionIcon } from "./ChampionIcon";
+import { Modal } from "./Modal";
+import { NewQuoteForm } from "./NewQuoteForm";
 
 export function PostCard({ post }: { post: Post }) {
   // Regular (non-suspense) query on purpose: a transient failure fetching
   // one card's champion shouldn't crash the whole feed via the error
   // boundary -- it just falls back to showing the raw championId.
   const { data: champion } = useQuery(championQueryOptions(post.championId));
+  const [quoting, setQuoting] = useState(false);
 
   return (
     <article className="flex gap-3 border-b border-extra p-4">
@@ -41,8 +45,17 @@ export function PostCard({ post }: { post: Post }) {
           <Link href={`/post/${post.id}/quotes`} className="hover:text-primary">
             {post.quotesCount} citas
           </Link>
+          <button type="button" onClick={() => setQuoting(true)} className="hover:text-primary">
+            Citar
+          </button>
         </div>
       </div>
+
+      {quoting && (
+        <Modal onClose={() => setQuoting(false)}>
+          <NewQuoteForm post={post} onClose={() => setQuoting(false)} />
+        </Modal>
+      )}
     </article>
   );
 }
