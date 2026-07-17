@@ -3,7 +3,7 @@ import pytest
 
 async def _create_post(client, champion_id="ahri", content="hola mundo"):
     r = await client.post(
-        "/api/v1/posts", json={"champion_id": champion_id, "content": content}
+        "/api/v1/posts", json={"championId": champion_id, "content": content}
     )
     assert r.status_code == 201
     return r.json()
@@ -11,23 +11,23 @@ async def _create_post(client, champion_id="ahri", content="hola mundo"):
 
 async def test_create_post_returns_post_with_zero_counts(client):
     post = await _create_post(client)
-    assert post["champion_id"] == "ahri"
+    assert post["championId"] == "ahri"
     assert post["content"] == "hola mundo"
-    assert post["response_of"] is None
-    assert post["quote_of"] is None
-    assert post["responses_count"] == 0
-    assert post["quotes_count"] == 0
-    assert post["created_at"] is not None
+    assert post["responseOf"] is None
+    assert post["quoteOf"] is None
+    assert post["responsesCount"] == 0
+    assert post["quotesCount"] == 0
+    assert post["createdAt"] is not None
 
 
 async def test_create_post_rejects_empty_content(client):
-    r = await client.post("/api/v1/posts", json={"champion_id": "ahri", "content": ""})
+    r = await client.post("/api/v1/posts", json={"championId": "ahri", "content": ""})
     assert r.status_code == 422
 
 
 async def test_create_post_rejects_content_over_max_length(client):
     r = await client.post(
-        "/api/v1/posts", json={"champion_id": "ahri", "content": "a" * 281}
+        "/api/v1/posts", json={"championId": "ahri", "content": "a" * 281}
     )
     assert r.status_code == 422
 
@@ -58,7 +58,7 @@ async def test_list_posts_only_returns_root_posts(client):
     root = await _create_post(client, content="root post")
     await client.post(
         f"/api/v1/posts/{root['id']}/responses",
-        json={"champion_id": "yasuo", "content": "a reply"},
+        json={"championId": "yasuo", "content": "a reply"},
     )
 
     r = await client.get("/api/v1/posts")
@@ -72,7 +72,7 @@ async def test_list_posts_includes_standalone_quotes_as_root(client):
     root = await _create_post(client, content="root post")
     quote = await client.post(
         f"/api/v1/posts/{root['id']}/quotes",
-        json={"champion_id": "zed", "content": "quoting this"},
+        json={"championId": "zed", "content": "quoting this"},
     )
     assert quote.status_code == 201
 
@@ -87,10 +87,10 @@ async def test_list_posts_filters_by_champion(client):
     await _create_post(client, champion_id="ahri", content="ahri post")
     await _create_post(client, champion_id="zed", content="zed post")
 
-    r = await client.get("/api/v1/posts", params={"champion_id": "ahri"})
+    r = await client.get("/api/v1/posts", params={"championId": "ahri"})
     body = r.json()
     assert body["count"] == 1
-    assert body["posts"][0]["champion_id"] == "ahri"
+    assert body["posts"][0]["championId"] == "ahri"
 
 
 async def test_list_posts_orders_by_created_at_ascending(client):
@@ -116,21 +116,21 @@ async def test_create_response_increments_parent_responses_count(client):
     root = await _create_post(client)
     r = await client.post(
         f"/api/v1/posts/{root['id']}/responses",
-        json={"champion_id": "yasuo", "content": "responding"},
+        json={"championId": "yasuo", "content": "responding"},
     )
     assert r.status_code == 201
     response = r.json()
-    assert response["response_of"] == root["id"]
+    assert response["responseOf"] == root["id"]
 
     parent = (await client.get(f"/api/v1/posts/{root['id']}")).json()
-    assert parent["responses_count"] == 1
-    assert parent["quotes_count"] == 0
+    assert parent["responsesCount"] == 1
+    assert parent["quotesCount"] == 0
 
 
 async def test_create_response_on_nonexistent_post_returns_404(client):
     r = await client.post(
         "/api/v1/posts/00000000-0000-0000-0000-000000000000/responses",
-        json={"champion_id": "yasuo", "content": "responding"},
+        json={"championId": "yasuo", "content": "responding"},
     )
     assert r.status_code == 404
 
@@ -140,11 +140,11 @@ async def test_list_responses_for_a_post(client):
     other_root = await _create_post(client, content="unrelated")
     reply = await client.post(
         f"/api/v1/posts/{root['id']}/responses",
-        json={"champion_id": "yasuo", "content": "reply 1"},
+        json={"championId": "yasuo", "content": "reply 1"},
     )
     await client.post(
         f"/api/v1/posts/{other_root['id']}/responses",
-        json={"champion_id": "zed", "content": "unrelated reply"},
+        json={"championId": "zed", "content": "unrelated reply"},
     )
 
     r = await client.get(f"/api/v1/posts/{root['id']}/responses")
@@ -157,22 +157,22 @@ async def test_create_quote_increments_parent_quotes_count(client):
     root = await _create_post(client)
     r = await client.post(
         f"/api/v1/posts/{root['id']}/quotes",
-        json={"champion_id": "zed", "content": "quoting"},
+        json={"championId": "zed", "content": "quoting"},
     )
     assert r.status_code == 201
     quote = r.json()
-    assert quote["quote_of"] == root["id"]
+    assert quote["quoteOf"] == root["id"]
 
     parent = (await client.get(f"/api/v1/posts/{root['id']}")).json()
-    assert parent["quotes_count"] == 1
-    assert parent["responses_count"] == 0
+    assert parent["quotesCount"] == 1
+    assert parent["responsesCount"] == 0
 
 
 async def test_list_quotes_for_a_post(client):
     root = await _create_post(client)
     quote = await client.post(
         f"/api/v1/posts/{root['id']}/quotes",
-        json={"champion_id": "zed", "content": "quoting"},
+        json={"championId": "zed", "content": "quoting"},
     )
 
     r = await client.get(f"/api/v1/posts/{root['id']}/quotes")
@@ -186,7 +186,7 @@ async def test_list_champion_posts(client):
     ahri_post = await _create_post(client, champion_id="ahri", content="ahri root 2")
     await client.post(
         f"/api/v1/posts/{ahri_post['id']}/responses",
-        json={"champion_id": "ahri", "content": "ahri reply"},
+        json={"championId": "ahri", "content": "ahri reply"},
     )
 
     r = await client.get("/api/v1/champions/ahri/posts")
@@ -198,7 +198,7 @@ async def test_list_champion_responses(client):
     root = await _create_post(client, champion_id="zed")
     await client.post(
         f"/api/v1/posts/{root['id']}/responses",
-        json={"champion_id": "ahri", "content": "ahri responding as ahri"},
+        json={"championId": "ahri", "content": "ahri responding as ahri"},
     )
 
     r = await client.get("/api/v1/champions/ahri/responses")

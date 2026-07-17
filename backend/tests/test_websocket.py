@@ -34,11 +34,11 @@ def test_new_post_broadcasts_to_websocket_clients():
         with TestClient(app) as sync_client:
             with sync_client.websocket_connect("/ws/posts") as ws:
                 r = sync_client.post(
-                    "/api/v1/posts", json={"champion_id": "ahri", "content": "hi"}
+                    "/api/v1/posts", json={"championId": "ahri", "content": "hi"}
                 )
                 assert r.status_code == 201
                 message = ws.receive_json()
                 assert message["event"] == "new_post"
-                assert message["post_id"] == r.json()["id"]
+                assert message["postId"] == r.json()["id"]
     finally:
         app.dependency_overrides.pop(get_db, None)

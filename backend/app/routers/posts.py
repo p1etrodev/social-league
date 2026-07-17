@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/v1/posts", tags=["posts"])
 
 @router.get("", response_model=PostListRead)
 async def list_posts(
-    champion_id: str | None = None,
+    champion_id: str | None = Query(default=None, alias="championId"),
     limit: int = 50,
     offset: int = 0,
     db: AsyncSession = Depends(get_db),
@@ -35,7 +35,7 @@ async def create_post(payload: PostCreate, db: AsyncSession = Depends(get_db)):
     post = await crud.create_post(
         db, champion_id=payload.champion_id, content=payload.content
     )
-    await manager.broadcast({"event": "new_post", "post_id": str(post["id"])})
+    await manager.broadcast({"event": "new_post", "postId": str(post["id"])})
     return post
 
 
@@ -66,7 +66,7 @@ async def create_response(
         content=payload.content,
         response_of=post_id,
     )
-    await manager.broadcast({"event": "new_post", "post_id": str(response["id"])})
+    await manager.broadcast({"event": "new_post", "postId": str(response["id"])})
     return response
 
 
@@ -94,5 +94,5 @@ async def create_quote(
     quote = await crud.create_post(
         db, champion_id=payload.champion_id, content=payload.content, quote_of=post_id
     )
-    await manager.broadcast({"event": "new_post", "post_id": str(quote["id"])})
+    await manager.broadcast({"event": "new_post", "postId": str(quote["id"])})
     return quote
