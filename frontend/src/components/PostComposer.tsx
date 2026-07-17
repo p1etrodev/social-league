@@ -26,8 +26,9 @@ export function PostComposer({ placeholder, buttonLabel, isPending, onSubmit, cl
   return (
     <form
       onSubmit={handleSubmit}
-      className={`flex flex-col gap-3 border-b border-extra p-4 ${className ?? ""}`}
+      className={`relative flex flex-col gap-3 border-b border-extra p-4 ${className ?? ""}`}
     >
+      <div className="absolute inset-x-4 top-0 h-0.5 bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -41,7 +42,7 @@ export function PostComposer({ placeholder, buttonLabel, isPending, onSubmit, cl
         <button
           type="submit"
           disabled={!champion || !content.trim() || isPending}
-          className="rounded-full bg-gradient-to-br from-primary-bright to-primary px-5 py-2 font-black tracking-wide text-dark disabled:opacity-50"
+          className="animate-hex-pulse rounded-full bg-gradient-to-br from-secondary-bright to-secondary px-5 py-2 font-black tracking-wide text-secondary-ink disabled:animate-none disabled:opacity-50"
         >
           {buttonLabel}
         </button>
