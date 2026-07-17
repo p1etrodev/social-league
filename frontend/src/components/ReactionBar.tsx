@@ -23,12 +23,14 @@ export function ReactionBar({ postId }: { postId: string }) {
             type="button"
             onClick={() => toggle(emoji)}
             title={LABELS[emoji]}
-            className={`flex items-center gap-1 rounded px-2 py-0.5 ${
-              mine ? "bg-secondary/15 text-secondary" : "text-muted hover:text-secondary"
+            className={`flex items-center gap-1 rounded-full border px-2 py-0.5 ${
+              mine
+                ? "glow-blue border-secondary/40 bg-secondary/15 text-secondary"
+                : "border-extra/20 text-muted hover:text-secondary"
             }`}
           >
             <span>{emoji}</span>
-            {count > 0 && <span>{count}</span>}
+            {count > 0 && <span className="font-mono">{count}</span>}
           </button>
         );
       })}

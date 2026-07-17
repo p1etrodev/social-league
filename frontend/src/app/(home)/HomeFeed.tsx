@@ -21,8 +21,9 @@ export function HomeFeed() {
         <button
           type="button"
           onClick={showNewPosts}
-          className="border-b border-extra bg-primary/10 p-3 text-center font-bold text-primary hover:bg-primary/20"
+          className="flex items-center justify-center gap-2 border-b border-secondary/30 bg-secondary-dim p-3 text-center font-bold text-secondary-bright hover:bg-secondary-dim/70"
         >
+          <span className="glow-blue animate-dot-pulse size-1.5 rounded-full bg-secondary" />
           Mostrar {newCount} publicaciones nuevas
         </button>
       )}

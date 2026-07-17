@@ -41,7 +41,7 @@ export function PostCard({ post }: { post: Post }) {
             className="size-5 rounded-full ring-2 ring-primary/40"
           />
           <span>{champion?.name ?? post.championId} reposteó</span>
-          <span>· {relativeDate(post.createdAt)}</span>
+          <span className="font-mono">· {relativeDate(post.createdAt)}</span>
         </div>
         <div className="rounded border border-extra">
           <PostCard post={reposted} />
@@ -66,23 +66,23 @@ export function PostCard({ post }: { post: Post }) {
             {champion?.name ?? post.championId}
           </Link>
           {champion && <span className="text-sm text-muted">{toIdentifier(champion.title)}</span>}
-          <span className="text-sm text-muted">· {relativeDate(post.createdAt)}</span>
+          <span className="font-mono text-sm text-muted">· {relativeDate(post.createdAt)}</span>
         </div>
         <Link href={`/post/${post.id}`}>
           <p className="text-paper">{post.content}</p>
         </Link>
         <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted">
           <Link href={`/post/${post.id}`} className="hover:text-primary">
-            {post.responsesCount} respuestas
+            <span className="font-mono">{post.responsesCount}</span> respuestas
           </Link>
           <Link href={`/post/${post.id}/quotes`} className="hover:text-primary">
-            {post.quotesCount} citas
+            <span className="font-mono">{post.quotesCount}</span> citas
           </Link>
           <button type="button" onClick={() => setQuoting(true)} className="hover:text-primary">
             Citar
           </button>
           <Link href={`/post/${post.id}/reposts`} className="hover:text-primary">
-            {post.repostsCount} reposts
+            <span className="font-mono">{post.repostsCount}</span> reposts
           </Link>
           <button type="button" onClick={() => setReposting(true)} className="hover:text-primary">
             Repostear
