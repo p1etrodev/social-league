@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useChampion } from "@/hooks/useChampion";
 import { useChampionPosts } from "@/hooks/useChampionPosts";
 import { useChampionResponses } from "@/hooks/useChampionResponses";
-import { championLoadingUrl } from "@/lib/data-dragon";
+import { championLoadingUrl, championSplashUrl } from "@/lib/data-dragon";
 import { toIdentifier } from "@/lib/format";
 import { tagLabel } from "@/lib/tags";
 import { PostCard } from "@/components/PostCard";
@@ -46,7 +46,18 @@ export function ChampionView({ id }: { id: string }) {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex flex-col gap-4 border-b border-extra p-4 sm:flex-row">
+      <div className="relative flex flex-col gap-4 overflow-hidden border-b border-extra p-4 sm:flex-row">
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src={championSplashUrl(champion.id)}
+            alt=""
+            fill
+            priority
+            className="object-cover object-top opacity-25"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-dark/40 via-dark/80 to-dark" />
+        </div>
         <div className="flex flex-col gap-2">
           <div className="relative aspect-[308/560] w-full max-w-56 overflow-hidden rounded">
             <Image
