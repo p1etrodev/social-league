@@ -3,9 +3,13 @@
 @theme {
   --color-primary: #d8b45c;
   --color-primary-bright: #f3d488;
-  --color-secondary: #37b6ac;
-  --color-secondary-dim: #1c4d49;
+  --color-secondary: #4cd3ff;
+  --color-secondary-bright: #a6ecff;
+  --color-secondary-dim: #163c4a;
+  --color-secondary-ink: #04222c;
   --color-extra: #7a6636;
+  --color-silver: #b8c4d9;
+  --color-bronze: #c97a4a;
   --color-dark: #050a14;
   --color-surface: #0d1a2e;
   --color-surface-raised: #16273f;
@@ -14,8 +18,11 @@
 
   --font-heading: var(--font-cinzel);
   --font-body: var(--font-manrope);
+  --font-mono: var(--font-share-tech);
 
   --animate-reveal-up: reveal-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-hex-pulse: hex-pulse 2.6s ease-in-out infinite;
+  --animate-dot-pulse: dot-pulse 1.6s ease-in-out infinite;
 }
 
 @keyframes reveal-up {
@@ -27,6 +34,38 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes hex-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 18px rgba(76, 211, 255, 0.55),
+      0 0 40px rgba(76, 211, 255, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(76, 211, 255, 0.35),
+      0 0 22px rgba(76, 211, 255, 0.1);
+  }
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.72);
+  }
+}
+
+.glow-blue {
+  box-shadow:
+    0 0 18px rgba(76, 211, 255, 0.55),
+    0 0 40px rgba(76, 211, 255, 0.18);
 }
 
 body {
