@@ -26,7 +26,7 @@ export function ChampionSelect({ value, onChange }: Props) {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="flex items-center gap-2 rounded bg-extra/40 px-3 py-2 text-paper"
+        className="flex items-center gap-2 rounded-lg border border-extra/30 bg-surface px-3 py-2 text-paper"
       >
         {value ? (
           <>
@@ -44,13 +44,13 @@ export function ChampionSelect({ value, onChange }: Props) {
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-0 z-10 mb-2 max-h-64 w-56 overflow-y-auto rounded bg-dark shadow-lg ring-1 ring-extra">
+        <div className="absolute bottom-full left-0 z-10 mb-2 max-h-64 w-56 overflow-y-auto rounded-lg bg-surface shadow-lg ring-1 ring-extra/30">
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar"
-            className="w-full border-b border-extra bg-transparent px-3 py-2 text-paper outline-none"
+            className="w-full border-b border-extra/30 bg-transparent px-3 py-2 text-paper outline-none"
           />
           {filtered.map((champion) => (
             <button
@@ -60,7 +60,7 @@ export function ChampionSelect({ value, onChange }: Props) {
                 onChange(champion);
                 setOpen(false);
               }}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-paper hover:bg-extra/40"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-paper hover:bg-primary/10"
             >
               <ChampionIcon
                 championId={champion.id}
