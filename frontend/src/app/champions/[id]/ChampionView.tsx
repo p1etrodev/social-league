@@ -48,9 +48,13 @@ export function ChampionView({ id }: { id: string }) {
   const { data: champion } = useChampion(id);
   const [tab, setTab] = useState<Tab>("posts");
 
+  const statValues = Object.values(champion.info);
+  const power = statValues.reduce((sum, v) => sum + v, 0) / statValues.length;
+  const powerAngle = (power / 10) * 360;
+
   return (
     <div className="flex flex-1 flex-col">
-      <div className="relative flex flex-col gap-4 overflow-hidden border-b border-extra p-4 sm:flex-row">
+      <div className="relative overflow-hidden border-b border-extra pt-4 pb-10 sm:pb-4">
         <div className="absolute inset-0 -z-10">
           <Image
             src={championSplashUrl(champion.id)}
@@ -62,7 +66,7 @@ export function ChampionView({ id }: { id: string }) {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-dark/40 via-dark/80 to-dark" />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4 px-4 sm:flex-row">
           <div className="relative aspect-[308/560] w-full max-w-56 overflow-hidden rounded">
             <Image
               src={championLoadingUrl(champion.id)}
@@ -72,32 +76,46 @@ export function ChampionView({ id }: { id: string }) {
               sizes="224px"
             />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-1 flex-col gap-2">
+            <div>
+              <h1 className="font-heading text-2xl font-black text-primary">{champion.name}</h1>
+              <p className="text-muted">{toIdentifier(champion.title)}</p>
+            </div>
+            <div className="flex gap-2">
+              {champion.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-md border border-secondary-dim bg-secondary/10 px-2 py-1 text-xs font-bold text-secondary"
+                >
+                  {tagLabel(tag)}
+                </span>
+              ))}
+            </div>
+            <p className="text-sm text-paper">{champion.lore}</p>
+          </div>
+        </div>
+
+        <div className="relative z-10 mx-4 -mb-14 mt-4 flex items-center gap-5 rounded-lg border border-extra/30 bg-surface-raised p-4 shadow-lg sm:-mb-6">
+          <div
+            className="flex size-19 shrink-0 items-center justify-center rounded-full"
+            style={{
+              background: `conic-gradient(var(--color-primary-bright) 0deg ${powerAngle}deg, rgba(148,168,199,0.14) ${powerAngle}deg 360deg)`,
+            }}
+          >
+            <div className="flex size-15 flex-col items-center justify-center rounded-full bg-surface">
+              <b className="font-mono text-lg text-primary-bright">{power.toFixed(1)}</b>
+              <small className="text-[8px] tracking-wide text-muted uppercase">Poder</small>
+            </div>
+          </div>
+          <div className="flex flex-1 flex-col gap-1.5">
             {Object.entries(champion.info).map(([stat, value]) => (
               <StatRating key={stat} label={statLabel(stat)} value={value} />
             ))}
           </div>
         </div>
-        <div className="flex flex-1 flex-col gap-2">
-          <div>
-            <h1 className="font-heading text-2xl font-black text-primary">{champion.name}</h1>
-            <p className="text-muted">{toIdentifier(champion.title)}</p>
-          </div>
-          <div className="flex gap-2">
-            {champion.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-md border border-secondary-dim bg-secondary/10 px-2 py-1 text-xs font-bold text-secondary"
-              >
-                {tagLabel(tag)}
-              </span>
-            ))}
-          </div>
-          <p className="text-sm text-paper">{champion.lore}</p>
-        </div>
       </div>
 
-      <div className="flex border-b border-extra">
+      <div className="mt-10 flex border-b border-extra sm:mt-0">
         {TABS.map((t) => (
           <button
             key={t.key}
