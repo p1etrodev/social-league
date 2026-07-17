@@ -13,7 +13,15 @@ import { NewQuoteForm } from "./NewQuoteForm";
 import { NewRepostForm } from "./NewRepostForm";
 import { ReactionBar } from "./ReactionBar";
 
-export function PostCard({ post }: { post: Post }) {
+type Props = {
+  post: Post;
+  /** Renders without its own card chrome, for when a post is shown nested
+   * inside another card (a repost embed, or a quote/repost preview) so it
+   * doesn't double up on background/border/shadow. */
+  embedded?: boolean;
+};
+
+export function PostCard({ post, embedded }: Props) {
   // Regular (non-suspense) query on purpose: a transient failure fetching
   // one card's champion shouldn't crash the whole feed via the error
   // boundary -- it just falls back to showing the raw championId.
@@ -32,7 +40,7 @@ export function PostCard({ post }: { post: Post }) {
   if (post.repostOf) {
     if (!reposted) return null;
     return (
-      <div className="border-b border-extra p-4">
+      <div className={embedded ? "" : "panel p-4"}>
         <div className="mb-2 flex items-center gap-2 text-sm text-muted">
           <ChampionIcon
             championId={post.championId}
@@ -43,15 +51,15 @@ export function PostCard({ post }: { post: Post }) {
           <span>{champion?.name ?? post.championId} reposteó</span>
           <span className="font-mono">· {relativeDate(post.createdAt)}</span>
         </div>
-        <div className="rounded border border-extra">
-          <PostCard post={reposted} />
+        <div className="panel overflow-hidden">
+          <PostCard post={reposted} embedded />
         </div>
       </div>
     );
   }
 
   return (
-    <article className="flex gap-3 border-b border-extra p-4">
+    <article className={`flex gap-3 p-4 ${embedded ? "" : "panel panel-hover"}`}>
       <Link href={`/champions/${post.championId}`} className="shrink-0">
         <ChampionIcon
           championId={post.championId}

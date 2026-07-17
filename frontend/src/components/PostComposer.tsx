@@ -11,9 +11,19 @@ type Props = {
   isPending: boolean;
   onSubmit: (input: NewPostInput, reset: () => void) => void;
   className?: string;
+  /** Skips the panel card chrome for composers already nested inside
+   * another card (e.g. a modal), so it doesn't double up. */
+  bare?: boolean;
 };
 
-export function PostComposer({ placeholder, buttonLabel, isPending, onSubmit, className }: Props) {
+export function PostComposer({
+  placeholder,
+  buttonLabel,
+  isPending,
+  onSubmit,
+  className,
+  bare,
+}: Props) {
   const [champion, setChampion] = useLastChampion();
   const [content, setContent] = useState("");
 
@@ -26,9 +36,11 @@ export function PostComposer({ placeholder, buttonLabel, isPending, onSubmit, cl
   return (
     <form
       onSubmit={handleSubmit}
-      className={`relative flex flex-col gap-3 border-b border-extra p-4 ${className ?? ""}`}
+      className={`relative flex flex-col gap-3 ${bare ? "" : "panel p-4"} ${className ?? ""}`}
     >
-      <div className="absolute inset-x-4 top-0 h-0.5 bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+      {!bare && (
+        <div className="absolute inset-x-4 top-0 h-0.5 bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+      )}
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}

@@ -24,8 +24,8 @@ export function NewRepostForm({ post, onClose }: { post: Post; onClose: () => vo
         </button>
       </div>
 
-      <div className="rounded border border-extra">
-        <PostCard post={post} />
+      <div className="panel overflow-hidden">
+        <PostCard post={post} embedded />
       </div>
 
       <div className="flex items-center justify-between">

@@ -15,13 +15,13 @@ export function HomeFeed() {
   const posts = data ? [...data.posts].reverse() : [];
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col gap-3 p-4">
       <NewPostForm />
       {newCount > 0 && (
         <button
           type="button"
           onClick={showNewPosts}
-          className="flex items-center justify-center gap-2 border-b border-secondary/30 bg-secondary-dim p-3 text-center font-bold text-secondary-bright hover:bg-secondary-dim/70"
+          className="flex items-center justify-center gap-2 rounded-lg border border-secondary/30 bg-secondary-dim p-3 text-center font-bold text-secondary-bright hover:bg-secondary-dim/70"
         >
           <span className="glow-blue animate-dot-pulse size-1.5 rounded-full bg-secondary" />
           Mostrar {newCount} publicaciones nuevas

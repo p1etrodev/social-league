@@ -17,8 +17,8 @@ export function NewQuoteForm({ post, onClose }: { post: Post; onClose: () => voi
         </button>
       </div>
 
-      <div className="rounded border border-extra">
-        <PostCard post={post} />
+      <div className="panel overflow-hidden">
+        <PostCard post={post} embedded />
       </div>
 
       <PostComposer
@@ -33,7 +33,7 @@ export function NewQuoteForm({ post, onClose }: { post: Post; onClose: () => voi
             },
           })
         }
-        className="border-b-0 p-0"
+        bare
       />
     </div>
   );
