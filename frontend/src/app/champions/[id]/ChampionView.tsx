@@ -81,7 +81,10 @@ export function ChampionView({ id }: { id: string }) {
           </div>
           <div className="flex gap-2">
             {champion.tags.map((tag) => (
-              <span key={tag} className="rounded bg-extra/40 px-2 py-1 text-xs text-paper">
+              <span
+                key={tag}
+                className="rounded-md border border-secondary-dim bg-secondary/10 px-2 py-1 text-xs font-bold text-secondary"
+              >
                 {tagLabel(tag)}
               </span>
             ))}
