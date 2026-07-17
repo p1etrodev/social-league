@@ -11,10 +11,10 @@ export function RepostsView({ id }: { id: string }) {
   const { data: reposts, isLoading } = usePostReposts(id);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col gap-3 p-4">
       <PostCard post={post} />
 
-      <h2 className="border-b border-extra p-4 text-sm font-bold text-muted">Reposts</h2>
+      <h2 className="text-sm font-bold text-muted">Reposts</h2>
 
       {isLoading && <Loading />}
       {reposts?.posts.length === 0 && (

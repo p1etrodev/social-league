@@ -25,10 +25,7 @@ function TrendingRow({ post, rank, maxScore }: { post: Post; rank: number; maxSc
   const medal = MEDAL_STYLES[rank - 1];
 
   return (
-    <Link
-      href={`/post/${post.id}`}
-      className="flex items-center gap-4 border-b border-extra p-4 hover:bg-primary/5"
-    >
+    <Link href={`/post/${post.id}`} className="panel panel-hover flex items-center gap-4 p-4">
       <span
         className={`w-8 shrink-0 text-center font-heading text-2xl font-black ${medal ? medal.num : "text-muted"}`}
       >
@@ -67,16 +64,18 @@ export function TrendingView() {
         </span>
       </div>
 
-      {isLoading && <Loading />}
-      {data?.posts.length === 0 && (
-        <EmptyState
-          title="Todavía no hay tendencias"
-          message="Todavía no hay suficiente actividad hoy."
-        />
-      )}
-      {data?.posts.map((post, index) => (
-        <TrendingRow key={post.id} post={post} rank={index + 1} maxScore={maxScore} />
-      ))}
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        {isLoading && <Loading />}
+        {data?.posts.length === 0 && (
+          <EmptyState
+            title="Todavía no hay tendencias"
+            message="Todavía no hay suficiente actividad hoy."
+          />
+        )}
+        {data?.posts.map((post, index) => (
+          <TrendingRow key={post.id} post={post} rank={index + 1} maxScore={maxScore} />
+        ))}
+      </div>
     </div>
   );
 }

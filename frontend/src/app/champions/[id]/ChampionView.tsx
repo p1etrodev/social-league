@@ -130,10 +130,12 @@ export function ChampionView({ id }: { id: string }) {
         ))}
       </div>
 
-      {tab === "posts" && <PostsTab championId={champion.id} />}
-      {tab === "responses" && <ResponsesTab championId={champion.id} />}
-      {tab === "skins" && <ChampionSkins championId={champion.id} skins={champion.skins} />}
-      {tab === "skills" && <ChampionSpells passive={champion.passive} spells={champion.spells} />}
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        {tab === "posts" && <PostsTab championId={champion.id} />}
+        {tab === "responses" && <ResponsesTab championId={champion.id} />}
+        {tab === "skins" && <ChampionSkins championId={champion.id} skins={champion.skins} />}
+        {tab === "skills" && <ChampionSpells passive={champion.passive} spells={champion.spells} />}
+      </div>
     </div>
   );
 }
