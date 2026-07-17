@@ -11,7 +11,7 @@ const HOME_ICON = (
 export function Navbar() {
   return (
     <>
-      <nav className="hidden w-full max-w-60 shrink-0 flex-col gap-1 bg-dark sm:flex">
+      <nav className="hidden w-full max-w-60 shrink-0 flex-col gap-1 bg-dark sm:flex sm:sticky top-0">
         <Link href="/" className="flex items-center gap-4 p-4 text-primary">
           <Image src="/jungle.png" alt="Social League" width={24} height={27} />
           <h1 className="font-heading text-2xl font-black">Social League</h1>

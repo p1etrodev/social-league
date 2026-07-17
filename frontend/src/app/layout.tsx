@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import "./globals.css";
+
 import { Mukta_Vaani, Roboto } from "next/font/google";
 import { siteDescription, siteName, siteUrl } from "@/lib/site";
+
+import type { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
 import { Providers } from "./providers";
-import "./globals.css";
 
 const muktaVaani = Mukta_Vaani({
   variable: "--font-mukta-vaani",
@@ -63,9 +65,9 @@ export default function RootLayout({
     <html lang="es" className={`${muktaVaani.variable} ${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
-          <div className="flex min-h-full flex-1">
+          <div className="flex min-h-full flex-1 flex-row justify-center">
             <Navbar />
-            <main className="flex flex-1 flex-col pb-16 sm:pb-0">{children}</main>
+            <main className="flex h-full min-w-[50%] flex-col pb-16 sm:pb-0">{children}</main>
           </div>
         </Providers>
       </body>

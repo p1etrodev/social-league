@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { postQueryOptions } from "@/hooks/usePost";
+import { postQuotesQueryOptions } from "@/hooks/usePostQuotes";
 import { getQueryClient } from "@/lib/query-client";
 import { isNotFoundError } from "@/lib/errors";
+import { QuotesView } from "./QuotesView";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -25,17 +28,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostQuotesPage({ params }: Props) {
   const { id } = await params;
+  const queryClient = getQueryClient();
 
   try {
-    await getQueryClient().fetchQuery(postQueryOptions(id));
+    // fetchQuery (unlike prefetchQuery) rejects on error instead of
+    // swallowing it, which is what lets us route to notFound() here.
+    await queryClient.fetchQuery(postQueryOptions(id));
   } catch (error) {
     if (isNotFoundError(error)) notFound();
     throw error;
   }
 
+  await queryClient.prefetchQuery(postQuotesQueryOptions(id));
+
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <p className="text-muted">Citas de este post — próximamente.</p>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <QuotesView id={id} />
+    </HydrationBoundary>
   );
 }

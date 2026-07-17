@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
+import { ChampionIcon } from "@/components/ChampionIcon";
 import Link from "next/link";
 import { useChampions } from "@/hooks/useChampions";
-import { ChampionIcon } from "@/components/ChampionIcon";
 
 export function ChampionsGrid() {
   const { data: champions, isLoading } = useChampions();
@@ -27,18 +28,18 @@ export function ChampionsGrid() {
 
       {isLoading && <p className="text-muted">Cargando...</p>}
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-[repeat(auto-fill, minmax(auto-fit, 1fr))] grid-cols-1">
         {filtered.map((champion) => (
           <Link
             key={champion.id}
             href={`/champions/${champion.id}`}
-            className="flex flex-col items-center gap-2 rounded p-3 text-center hover:bg-extra/20"
+            className="flex flex-col items-center gap-2 rounded p-1 text-center hover:bg-extra/20 aspect-square justify-center"
           >
             <ChampionIcon
               championId={champion.id}
               alt={champion.name}
               size={64}
-              className="size-16 rounded-full"
+              className="size-16"
             />
             <p className="text-sm text-paper">{champion.name}</p>
           </Link>
