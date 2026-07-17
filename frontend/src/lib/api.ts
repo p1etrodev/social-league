@@ -40,6 +40,15 @@ export type ReactionSummary = {
   mine: string[];
 };
 
+export type ChampionStreak = {
+  championId: string;
+  activity: number;
+};
+
+export type ChampionStreakList = {
+  champions: ChampionStreak[];
+};
+
 export async function fetchPost(id: string): Promise<Post> {
   const { data } = await apiClient.get<Post>(`/api/v1/posts/${id}`);
   return data;
@@ -148,5 +157,15 @@ export async function toggleReaction(
     `/api/v1/posts/${postId}/reactions`,
     input,
   );
+  return data;
+}
+
+export async function fetchChampionStreak(params?: {
+  hours?: number;
+  limit?: number;
+}): Promise<ChampionStreakList> {
+  const { data } = await apiClient.get<ChampionStreakList>("/api/v1/champions/streak", {
+    params,
+  });
   return data;
 }

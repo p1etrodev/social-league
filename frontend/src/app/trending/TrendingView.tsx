@@ -8,6 +8,7 @@ import type { Post } from "@/lib/api";
 import { ChampionIcon } from "@/components/ChampionIcon";
 import { EmptyState } from "@/components/EmptyState";
 import { Loading } from "@/components/Loading";
+import { StreakPanel } from "@/components/StreakPanel";
 
 const MEDAL_STYLES = [
   {
@@ -64,17 +65,22 @@ export function TrendingView() {
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        {isLoading && <Loading />}
-        {data?.posts.length === 0 && (
-          <EmptyState
-            title="Todavía no hay tendencias"
-            message="Todavía no hay suficiente actividad hoy."
-          />
-        )}
-        {data?.posts.map((post, index) => (
-          <TrendingRow key={post.id} post={post} rank={index + 1} maxScore={maxScore} />
-        ))}
+      <div className="flex flex-1 gap-4 p-4">
+        <div className="flex flex-1 flex-col gap-3">
+          {isLoading && <Loading />}
+          {data?.posts.length === 0 && (
+            <EmptyState
+              title="Todavía no hay tendencias"
+              message="Todavía no hay suficiente actividad hoy."
+            />
+          )}
+          {data?.posts.map((post, index) => (
+            <TrendingRow key={post.id} post={post} rank={index + 1} maxScore={maxScore} />
+          ))}
+        </div>
+        <div className="hidden xl:block">
+          <StreakPanel title="Campeones en racha" />
+        </div>
       </div>
     </div>
   );

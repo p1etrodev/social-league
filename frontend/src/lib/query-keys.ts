@@ -13,6 +13,8 @@ export const queryKeys = {
       [...queryKeys.champions.all, id, "quotes", params ?? {}] as const,
     reposts: (id: string, params?: ListParams) =>
       [...queryKeys.champions.all, id, "reposts", params ?? {}] as const,
+    streak: (params?: { hours?: number; limit?: number }) =>
+      [...queryKeys.champions.all, "streak", params ?? {}] as const,
   },
   posts: {
     all: ["posts"] as const,
