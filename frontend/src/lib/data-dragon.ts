@@ -9,6 +9,22 @@ export type ChampionSummary = {
   blurb: string;
 };
 
+export type Spell = {
+  name: string;
+  description: string;
+  image: { full: string };
+};
+
+export type ChampionDetail = ChampionSummary & {
+  tags: string[];
+  info: { attack: number; defense: number; magic: number; difficulty: number };
+  lore: string;
+  passive: Spell;
+  spells: Spell[];
+  /** Skin numbers, excluding the default skin (0). */
+  skins: number[];
+};
+
 export async function fetchLatestVersion(): Promise<string> {
   const { data } = await ddragonClient.get("/realms/las.json");
   return data.dd as string;
@@ -20,12 +36,12 @@ export async function fetchChampions(): Promise<ChampionSummary[]> {
   return Object.values(data.data) as ChampionSummary[];
 }
 
-export async function fetchChampion(championId: string): Promise<ChampionSummary> {
-  const version = await fetchLatestVersion();
-
-  let data: { data?: Record<string, unknown> };
+async function getChampionRawData(championId: string, version: string) {
   try {
-    ({ data } = await ddragonClient.get(`/cdn/${version}/data/es_AR/champion/${championId}.json`));
+    const { data } = await ddragonClient.get(
+      `/cdn/${version}/data/es_AR/champion/${championId}.json`,
+    );
+    return data.data?.[championId] as Record<string, unknown> | undefined;
   } catch (error) {
     // Data Dragon's S3-backed CDN returns 403 AccessDenied (not 404) for a
     // champion id that doesn't exist as a static file.
@@ -34,19 +50,28 @@ export async function fetchChampion(championId: string): Promise<ChampionSummary
     }
     throw error;
   }
+}
 
-  const champion = data.data?.[championId] as
-    | { id: string; name: string; title: string; blurb: string }
-    | undefined;
+export async function fetchChampion(championId: string): Promise<ChampionDetail> {
+  const version = await fetchLatestVersion();
+  const champion = await getChampionRawData(championId, version);
   if (!champion) {
     throw new NotFoundError(`Champion ${championId} not found in Data Dragon ${version}`);
   }
 
+  const skins = (champion.skins as { num: number }[] | undefined) ?? [];
+
   return {
-    id: champion.id,
-    name: champion.name,
-    title: champion.title,
-    blurb: champion.blurb,
+    id: champion.id as string,
+    name: champion.name as string,
+    title: champion.title as string,
+    blurb: champion.blurb as string,
+    tags: champion.tags as string[],
+    info: champion.info as ChampionDetail["info"],
+    lore: champion.lore as string,
+    passive: champion.passive as Spell,
+    spells: champion.spells as Spell[],
+    skins: skins.slice(1).map((skin) => skin.num),
   };
 }
 
@@ -54,4 +79,20 @@ const DDRAGON_CDN = "https://ddragon.leagueoflegends.com";
 
 export function championIconUrl(version: string, championId: string): string {
   return `${DDRAGON_CDN}/cdn/${version}/img/champion/${championId}.png`;
+}
+
+export function championLoadingUrl(championId: string): string {
+  return `${DDRAGON_CDN}/cdn/img/champion/loading/${championId}_0.jpg`;
+}
+
+export function championSplashUrl(championId: string, skinNumber = 0): string {
+  return `${DDRAGON_CDN}/cdn/img/champion/splash/${championId}_${skinNumber}.jpg`;
+}
+
+export function spellIconUrl(
+  version: string,
+  type: "spell" | "passive",
+  imageFile: string,
+): string {
+  return `${DDRAGON_CDN}/cdn/${version}/img/${type}/${imageFile}`;
 }

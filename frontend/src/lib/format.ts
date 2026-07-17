@@ -28,6 +28,15 @@ export function toIdentifier(value: string): string {
   );
 }
 
+/** Data Dragon descriptions embed HTML (<br>, <i>, ...) meant for their own
+ * renderer; strip it since we render plain text. */
+export function stripHtml(value: string): string {
+  return value
+    .replace(/<\/?.+?>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function relativeDate(isoDate: string): string {
   const target = new Date(isoDate);
   if (Number.isNaN(target.getTime())) return "Fecha no válida";
