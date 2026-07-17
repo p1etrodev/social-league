@@ -32,6 +32,14 @@ export type NewRepostInput = {
   championId: string;
 };
 
+export const REACTION_EMOJIS = ["⚡", "🛡️", "💀"] as const;
+export type ReactionEmoji = (typeof REACTION_EMOJIS)[number];
+
+export type ReactionSummary = {
+  counts: Record<string, number>;
+  mine: string[];
+};
+
 export async function fetchPost(id: string): Promise<Post> {
   const { data } = await apiClient.get<Post>(`/api/v1/posts/${id}`);
   return data;
@@ -114,5 +122,31 @@ export async function createQuote(postId: string, input: NewPostInput): Promise<
 
 export async function createRepost(postId: string, input: NewRepostInput): Promise<Post> {
   const { data } = await apiClient.post<Post>(`/api/v1/posts/${postId}/reposts`, input);
+  return data;
+}
+
+export async function fetchTrendingPosts(params?: {
+  hours?: number;
+  limit?: number;
+}): Promise<PostList> {
+  const { data } = await apiClient.get<PostList>("/api/v1/posts/trending", { params });
+  return data;
+}
+
+export async function fetchReactions(postId: string, anonId: string): Promise<ReactionSummary> {
+  const { data } = await apiClient.get<ReactionSummary>(`/api/v1/posts/${postId}/reactions`, {
+    params: { anonId },
+  });
+  return data;
+}
+
+export async function toggleReaction(
+  postId: string,
+  input: { anonId: string; emoji: ReactionEmoji },
+): Promise<ReactionSummary> {
+  const { data } = await apiClient.post<ReactionSummary>(
+    `/api/v1/posts/${postId}/reactions`,
+    input,
+  );
   return data;
 }

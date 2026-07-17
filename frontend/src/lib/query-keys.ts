@@ -25,5 +25,9 @@ export const queryKeys = {
       [...queryKeys.posts.all, id, "quotes", params ?? {}] as const,
     reposts: (id: string, params?: ListParams) =>
       [...queryKeys.posts.all, id, "reposts", params ?? {}] as const,
+    reactions: (id: string, anonId: string) =>
+      [...queryKeys.posts.all, id, "reactions", anonId] as const,
+    trending: (params?: { hours?: number; limit?: number }) =>
+      [...queryKeys.posts.all, "trending", params ?? {}] as const,
   },
 };

@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import Annotated
 from uuid import UUID
 
@@ -54,3 +55,24 @@ class PostRead(CamelModel):
 class PostListRead(CamelModel):
     posts: list[PostRead]
     count: int
+
+
+class ReactionEmoji(str, Enum):
+    """Fixed set on purpose -- open-ended emoji input invites spam, and a
+    small curated set of League-flavored reactions (a lighter-weight
+    engagement layer than quoting/responding) is the actual feature."""
+
+    pentakill = "⚡"
+    gg = "🛡️"
+    ace = "💀"
+
+
+class ReactionToggle(CamelModel):
+    # Client-generated, localStorage-persisted id -- see Reaction.anon_id.
+    anon_id: Annotated[str, Field(min_length=1, max_length=64)]
+    emoji: ReactionEmoji
+
+
+class ReactionSummary(CamelModel):
+    counts: dict[str, int]
+    mine: list[str]

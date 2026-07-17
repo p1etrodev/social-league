@@ -11,6 +11,7 @@ import { ChampionIcon } from "./ChampionIcon";
 import { Modal } from "./Modal";
 import { NewQuoteForm } from "./NewQuoteForm";
 import { NewRepostForm } from "./NewRepostForm";
+import { ReactionBar } from "./ReactionBar";
 
 export function PostCard({ post }: { post: Post }) {
   // Regular (non-suspense) query on purpose: a transient failure fetching
@@ -87,6 +88,7 @@ export function PostCard({ post }: { post: Post }) {
             Repostear
           </button>
         </div>
+        <ReactionBar postId={post.id} />
       </div>
 
       {quoting && (

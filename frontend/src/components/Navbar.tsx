@@ -8,6 +8,16 @@ const HOME_ICON = (
   </svg>
 );
 
+const TRENDING_ICON = (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="size-6">
+    <path
+      fillRule="evenodd"
+      d="M15.22 6.268a.75.75 0 0 1 .968-.432l5.942 2.28a.75.75 0 0 1 .431.97l-2.28 5.94a.75.75 0 1 1-1.4-.537l1.63-4.251-1.086.483a11.2 11.2 0 0 0-5.45 5.174.75.75 0 0 1-1.199.19L9 12.31l-6.22 6.22a.75.75 0 1 1-1.06-1.06l6.75-6.75a.75.75 0 0 1 1.06 0l3.606 3.605a12.694 12.694 0 0 1 5.68-4.973l1.086-.483-4.251-1.631a.75.75 0 0 1-.432-.97Z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
 export function Navbar() {
   return (
     <>
@@ -30,6 +40,13 @@ export function Navbar() {
           <Image src="/champion-icon.png" alt="" width={24} height={24} />
           <span>Campeones</span>
         </Link>
+        <Link
+          href="/trending"
+          className="flex items-center gap-4 border-b-2 border-transparent p-4 font-black text-primary hover:border-primary"
+        >
+          {TRENDING_ICON}
+          <span>Tendencias</span>
+        </Link>
       </nav>
       <nav className="fixed inset-x-0 bottom-0 flex justify-around bg-dark py-2 sm:hidden">
         <Link href="/" className="p-2 text-primary">
@@ -37,6 +54,9 @@ export function Navbar() {
         </Link>
         <Link href="/champions" className="p-2 text-primary">
           <Image src="/champion-icon.png" alt="Campeones" width={24} height={24} />
+        </Link>
+        <Link href="/trending" className="p-2 text-primary">
+          {TRENDING_ICON}
         </Link>
       </nav>
     </>

@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +11,8 @@ from app.schemas import (
     PostListRead,
     PostRead,
     QuoteCreate,
+    ReactionSummary,
+    ReactionToggle,
     RepostCreate,
     ResponseCreate,
 )
@@ -27,6 +30,20 @@ async def list_posts(
 ):
     posts, count = await crud.list_root_posts(db, champion_id, limit, offset)
     return {"posts": posts, "count": count}
+
+
+# Registered before "/{post_id}" -- FastAPI matches path *shape* first, so a
+# GET /posts/trending would otherwise hit get_post's route and fail UUID
+# validation before ever reaching this one.
+@router.get("/trending", response_model=PostListRead)
+async def list_trending(
+    hours: int = 24,
+    limit: int = 10,
+    db: AsyncSession = Depends(get_db),
+):
+    since = datetime.now(timezone.utc) - timedelta(hours=hours)
+    posts = await crud.list_trending(db, since=since, limit=limit)
+    return {"posts": posts, "count": len(posts)}
 
 
 @router.get("/{post_id}", response_model=PostRead)
@@ -131,3 +148,26 @@ async def create_repost(
     )
     await manager.broadcast({"event": "new_post", "postId": str(repost["id"])})
     return repost
+
+
+@router.get("/{post_id}/reactions", response_model=ReactionSummary)
+async def get_reactions(
+    post_id: uuid.UUID,
+    anon_id: str = Query(alias="anonId"),
+    db: AsyncSession = Depends(get_db),
+):
+    if not await crud.get_post(db, post_id):
+        raise HTTPException(status_code=404, detail="Post not found")
+    return await crud.get_reaction_summary(db, post_id=post_id, anon_id=anon_id)
+
+
+@router.post("/{post_id}/reactions", response_model=ReactionSummary)
+async def toggle_reaction(
+    post_id: uuid.UUID, payload: ReactionToggle, db: AsyncSession = Depends(get_db)
+):
+    if not await crud.get_post(db, post_id):
+        raise HTTPException(status_code=404, detail="Post not found")
+    await crud.toggle_reaction(
+        db, post_id=post_id, anon_id=payload.anon_id, emoji=payload.emoji
+    )
+    return await crud.get_reaction_summary(db, post_id=post_id, anon_id=payload.anon_id)

@@ -1,10 +1,12 @@
 import uuid
+from datetime import datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from app.models import Post
+from app.models import Post, Reaction
+from app.schemas import ReactionEmoji
 
 
 def _counts_query():
@@ -155,6 +157,57 @@ async def list_reposts(
     rows = (await db.execute(query)).all()
     count = (await db.execute(count_query)).scalar_one()
     return [_row_to_dict(r) for r in rows], count
+
+
+async def list_trending(db: AsyncSession, *, since: datetime, limit: int) -> list[dict]:
+    responses_count, quotes_count, reposts_count = _counts_query()
+    engagement = quotes_count + reposts_count
+    query = (
+        select(
+            Post,
+            responses_count.label("responses_count"),
+            quotes_count.label("quotes_count"),
+            reposts_count.label("reposts_count"),
+        )
+        .where(Post.response_of.is_(None), Post.created_at >= since)
+        .order_by(engagement.desc(), Post.created_at.desc())
+        .limit(limit)
+    )
+    rows = (await db.execute(query)).all()
+    return [_row_to_dict(r) for r in rows]
+
+
+async def toggle_reaction(
+    db: AsyncSession, *, post_id: uuid.UUID, anon_id: str, emoji: ReactionEmoji
+) -> None:
+    existing = await db.execute(
+        select(Reaction).where(
+            Reaction.post_id == post_id, Reaction.anon_id == anon_id, Reaction.emoji == emoji
+        )
+    )
+    row = existing.scalar_one_or_none()
+    if row:
+        await db.delete(row)
+    else:
+        db.add(Reaction(post_id=post_id, anon_id=anon_id, emoji=emoji))
+    await db.commit()
+
+
+async def get_reaction_summary(db: AsyncSession, *, post_id: uuid.UUID, anon_id: str) -> dict:
+    counts = {emoji.value: 0 for emoji in ReactionEmoji}
+    counts_query = (
+        select(Reaction.emoji, func.count())
+        .where(Reaction.post_id == post_id)
+        .group_by(Reaction.emoji)
+    )
+    for emoji, count in (await db.execute(counts_query)).all():
+        counts[emoji] = count
+
+    mine_query = select(Reaction.emoji).where(
+        Reaction.post_id == post_id, Reaction.anon_id == anon_id
+    )
+    mine = (await db.execute(mine_query)).scalars().all()
+    return {"counts": counts, "mine": list(mine)}
 
 
 async def create_post(
