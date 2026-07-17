@@ -28,7 +28,7 @@ export function ChampionsGrid() {
 
       {isLoading && <p className="text-muted">Cargando...</p>}
 
-      <div className="grid gap-4 grid-cols-[repeat(auto-fill, minmax(auto-fit, 1fr))] grid-cols-1">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-4">
         {filtered.map((champion) => (
           <Link
             key={champion.id}
