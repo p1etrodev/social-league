@@ -23,23 +23,33 @@ export function ChampionSpells({ passive, spells }: { passive: Spell; spells: Sp
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="flex gap-2">
-        {entries.map((entry) => (
-          <button
-            key={entry.spell.name}
-            type="button"
-            onMouseEnter={() => setCurrent(entry)}
-            onFocus={() => setCurrent(entry)}
-            className={`relative size-12 shrink-0 overflow-hidden rounded ${
-              entry === current ? "ring-2 ring-primary" : ""
-            } ${entry.type === "passive" ? "rounded-full" : ""}`}
-          >
-            <Image
-              src={spellIconUrl(version, entry.type, entry.spell.image.full)}
-              alt={entry.spell.name}
-              fill
-            />
-          </button>
-        ))}
+        {entries.map((entry) => {
+          const isUltimate = entry.key === "R";
+          return (
+            <button
+              key={entry.spell.name}
+              type="button"
+              onMouseEnter={() => setCurrent(entry)}
+              onFocus={() => setCurrent(entry)}
+              className={`relative size-13 shrink-0 overflow-hidden rounded-lg border ${
+                isUltimate ? "glow-blue border-secondary" : "border-extra/40"
+              } ${entry === current && !isUltimate ? "ring-2 ring-primary" : ""} ${
+                entry.type === "passive" ? "rounded-full" : ""
+              }`}
+            >
+              {entry.type === "spell" && (
+                <span className="absolute top-0.5 left-1 z-10 font-mono text-[10px] text-primary-bright">
+                  {entry.key}
+                </span>
+              )}
+              <Image
+                src={spellIconUrl(version, entry.type, entry.spell.image.full)}
+                alt={entry.spell.name}
+                fill
+              />
+            </button>
+          );
+        })}
       </div>
       <div>
         <p className="font-bold text-primary">
