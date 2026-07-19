@@ -1,26 +1,26 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-
-export function Footer() {
-  const pathname = usePathname();
-  const isAboutPage = pathname === "/about";
-
+export function FooterCredit() {
   return (
-    <footer
-      className={`sticky bottom-16 z-10 w-full border-t border-extra/20 bg-surface/90 p-3 text-center text-xs text-muted backdrop-blur-sm sm:bottom-0 ${
-        isAboutPage ? "flex" : "hidden sm:flex"
-      } items-center justify-center`}
-    >
+    <>
       Made with ❤️ by{" "}
       <a
         href="https://pietrodev.up.railway.app"
         target="_blank"
         rel="noopener noreferrer"
-        className="ml-1 font-bold text-primary hover:text-primary-bright"
+        className="font-bold text-primary hover:text-primary-bright"
       >
         pietrodev
       </a>
+    </>
+  );
+}
+
+/** Desktop only -- on mobile there's no room to keep this permanently
+ * visible without competing with the bottom nav, so it shows up as a
+ * regular card on the /about page instead (see AboutView). */
+export function Footer() {
+  return (
+    <footer className="sticky bottom-0 z-10 hidden w-full items-center justify-center border-t border-extra/20 bg-surface/90 p-3 text-center text-xs text-muted backdrop-blur-sm sm:flex">
+      <FooterCredit />
     </footer>
   );
 }
