@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { useLatestVersion } from "@/hooks/useLatestVersion";
 import { spellIconUrl, type Spell } from "@/lib/data-dragon";
@@ -13,32 +12,25 @@ const SPELL_KEYS = ["Q", "W", "E", "R"];
 export function ChampionSpells({ passive, spells }: { passive: Spell; spells: Spell[] }) {
   const { data: version } = useLatestVersion();
   const entries: Entry[] = [
-    { spell: passive, type: "passive", key: "Pasiva" },
+    { spell: passive, type: "passive", key: "P" },
     ...spells.map((spell, index): Entry => ({ spell, type: "spell", key: SPELL_KEYS[index] })),
   ];
-  const [current, setCurrent] = useState<Entry>(entries[0]);
 
   if (!version) return null;
 
   return (
-    <div className="panel flex flex-col gap-4 p-4">
-      <div className="flex gap-2">
-        {entries.map((entry) => {
-          const isUltimate = entry.key === "R";
-          return (
-            <button
-              key={entry.spell.name}
-              type="button"
-              onMouseEnter={() => setCurrent(entry)}
-              onFocus={() => setCurrent(entry)}
-              className={`relative size-13 shrink-0 overflow-hidden rounded-lg border ${
-                isUltimate ? "glow-blue border-secondary" : "border-extra/40"
-              } ${entry === current && !isUltimate ? "ring-2 ring-primary" : ""} ${
+    <div className="panel flex flex-col gap-3.5 p-4">
+      {entries.map((entry) => {
+        const isUltimate = entry.key === "R";
+        return (
+          <div key={entry.spell.name} className="flex items-center gap-3">
+            <div
+              className={`relative size-13.5 shrink-0 overflow-hidden rounded-lg border bg-gradient-to-br from-surface-raised to-surface ${
                 entry.type === "passive" ? "rounded-full" : ""
-              }`}
+              } ${isUltimate ? "glow-blue border-secondary" : "border-extra/40"}`}
             >
               {entry.type === "spell" && (
-                <span className="absolute top-0.5 left-1 z-10 font-mono text-[10px] text-primary-bright">
+                <span className="absolute top-0.5 left-1 z-10 font-mono text-[9.5px] text-extra">
                   {entry.key}
                 </span>
               )}
@@ -46,17 +38,16 @@ export function ChampionSpells({ passive, spells }: { passive: Spell; spells: Sp
                 src={spellIconUrl(version, entry.type, entry.spell.image.full)}
                 alt={entry.spell.name}
                 fill
+                sizes="120px"
               />
-            </button>
-          );
-        })}
-      </div>
-      <div>
-        <p className="font-bold text-primary">
-          {current.spell.name} ({current.key})
-        </p>
-        <p className="text-sm text-muted">{stripHtml(current.spell.description)}</p>
-      </div>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-bold text-paper">{entry.spell.name}</span>
+              <span className="text-xs text-muted">{stripHtml(entry.spell.description)}</span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

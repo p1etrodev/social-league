@@ -1,11 +1,11 @@
 "use client";
 
+import { ChampionIcon } from "./ChampionIcon";
+import type { ChampionStreak } from "@/lib/api";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
 import { championQueryOptions } from "@/hooks/useChampion";
 import { useChampionStreak } from "@/hooks/useChampionStreak";
-import type { ChampionStreak } from "@/lib/api";
-import { ChampionIcon } from "./ChampionIcon";
+import { useQuery } from "@tanstack/react-query";
 
 function StreakRow({ champion, rank }: { champion: ChampionStreak; rank: number }) {
   const { data } = useQuery(championQueryOptions(champion.championId));
@@ -18,12 +18,14 @@ function StreakRow({ champion, rank }: { champion: ChampionStreak; rank: number 
       <span className="w-4 shrink-0 font-mono font-bold text-extra">
         {String(rank).padStart(2, "0")}
       </span>
-      <ChampionIcon
-        championId={champion.championId}
-        alt={champion.championId}
-        size={22}
-        className="size-[22px] shrink-0 rounded-full ring-2 ring-primary/40"
-      />
+      <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
+        <ChampionIcon
+          championId={champion.championId}
+          alt={champion.championId}
+          size={22}
+          className="scale-110 place-self-center"
+        />
+      </div>
       <span className="truncate font-bold text-paper">{data?.name ?? champion.championId}</span>
     </Link>
   );

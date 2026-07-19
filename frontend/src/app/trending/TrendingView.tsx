@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { championQueryOptions } from "@/hooks/useChampion";
-import { useTrendingPosts } from "@/hooks/useTrendingPosts";
-import type { Post } from "@/lib/api";
 import { ChampionIcon } from "@/components/ChampionIcon";
 import { EmptyState } from "@/components/EmptyState";
+import Link from "next/link";
 import { Loading } from "@/components/Loading";
+import type { Post } from "@/lib/api";
 import { StreakPanel } from "@/components/StreakPanel";
+import { championQueryOptions } from "@/hooks/useChampion";
+import { useQuery } from "@tanstack/react-query";
+import { useTrendingPosts } from "@/hooks/useTrendingPosts";
 
 const MEDAL_STYLES = [
   {
@@ -32,12 +32,14 @@ function TrendingRow({ post, rank, maxScore }: { post: Post; rank: number; maxSc
       >
         {String(rank).padStart(2, "0")}
       </span>
-      <ChampionIcon
-        championId={post.championId}
-        alt={post.championId}
-        size={40}
-        className="size-10 shrink-0 rounded-full ring-2 ring-primary/40"
-      />
+      <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
+        <ChampionIcon
+          championId={post.championId}
+          alt={post.championId}
+          size={64}
+          className="scale-110 place-self-center"
+        />
+      </div>
       <div className="min-w-0 flex-1">
         <p className="font-bold text-paper">{champion?.name ?? post.championId}</p>
         <p className="truncate text-sm text-muted">{post.content}</p>

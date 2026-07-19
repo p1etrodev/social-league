@@ -6,6 +6,9 @@ export function Loading({ label = "Sincronizando con la Grieta…" }: { label?: 
         <div className="animate-hex-pulse absolute inset-0 m-auto size-5 rotate-45 rounded-sm bg-gradient-to-br from-secondary-bright to-secondary" />
       </div>
       <p className="font-mono text-sm tracking-wide text-muted">{label}</p>
+      <div className="viscous-bar">
+        <div className="fill" />
+      </div>
     </div>
   );
 }

@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 
 import { ChampionIcon } from "@/components/ChampionIcon";
-import { Loading } from "@/components/Loading";
 import Link from "next/link";
+import { Loading } from "@/components/Loading";
 import { useChampions } from "@/hooks/useChampions";
 
 export function ChampionsGrid() {
@@ -37,12 +37,14 @@ export function ChampionsGrid() {
               href={`/champions/${champion.id}`}
               className="flex flex-col items-center gap-2 rounded p-1 text-center hover:bg-primary/8 aspect-square justify-center"
             >
-              <ChampionIcon
-                championId={champion.id}
-                alt={champion.name}
-                size={64}
-                className="size-16 rounded-full ring-2 ring-primary/30"
-              />
+              <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
+                <ChampionIcon
+                  championId={champion.id}
+                  alt={champion.name}
+                  size={64}
+                  className="scale-110 place-self-center"
+                />
+              </div>
               <p className="text-sm text-paper">{champion.name}</p>
             </Link>
           ))}
