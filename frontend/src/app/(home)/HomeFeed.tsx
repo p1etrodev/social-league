@@ -1,6 +1,7 @@
 "use client";
 
-import { usePosts } from "@/hooks/usePosts";
+import { useQuery } from "@tanstack/react-query";
+import { postsQueryOptions } from "@/hooks/usePosts";
 import { useNewPostsBanner } from "@/hooks/useNewPostsBanner";
 import { EmptyState } from "@/components/EmptyState";
 import { Loading } from "@/components/Loading";
@@ -9,7 +10,15 @@ import { PostCard } from "@/components/PostCard";
 import { StreakPanel } from "@/components/StreakPanel";
 
 export function HomeFeed() {
-  const { data, isLoading } = usePosts({ includeResponses: true });
+  // refetchOnWindowFocus/refetchOnReconnect off on purpose: new posts are
+  // meant to sit behind the "Mostrar N publicaciones nuevas" banner
+  // (see useNewPostsBanner), not appear the moment the tab regains focus
+  // or the socket reconnects once the query goes stale (staleTime: 60s).
+  const { data, isLoading } = useQuery({
+    ...postsQueryOptions({ includeResponses: true }),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
   const { newCount, showNewPosts } = useNewPostsBanner();
   // The API orders oldest-first (append-friendly for the backend); the feed
   // wants newest-first, so we only flip the order for display.
