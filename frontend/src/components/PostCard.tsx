@@ -106,33 +106,41 @@ export function PostCard({ post, embedded, hideParentContext }: Props) {
             <PostCard post={quoted} embedded />
           </div>
         )}
-        <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted">
-          <Link href={`/post/${post.id}`} className="hover:text-primary">
-            <span className="font-mono">{post.responsesCount}</span> respuestas
-          </Link>
-          <Link href={`/post/${post.id}/quotes`} className="hover:text-primary">
-            <span className="font-mono">{post.quotesCount}</span> citas
-          </Link>
-          <button type="button" onClick={() => setQuoting(true)} className="hover:text-primary">
-            Citar
-          </button>
-          <Link href={`/post/${post.id}/reposts`} className="hover:text-primary">
-            <span className="font-mono">{post.repostsCount}</span> reposts
-          </Link>
-          <button type="button" onClick={() => setReposting(true)} className="hover:text-primary">
-            Repostear
-          </button>
-        </div>
-        <ReactionBar postId={post.id} />
+        {!embedded && (
+          <>
+            <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted">
+              <Link href={`/post/${post.id}`} className="hover:text-primary">
+                <span className="font-mono">{post.responsesCount}</span> respuestas
+              </Link>
+              <Link href={`/post/${post.id}/quotes`} className="hover:text-primary">
+                <span className="font-mono">{post.quotesCount}</span> citas
+              </Link>
+              <button type="button" onClick={() => setQuoting(true)} className="hover:text-primary">
+                Citar
+              </button>
+              <Link href={`/post/${post.id}/reposts`} className="hover:text-primary">
+                <span className="font-mono">{post.repostsCount}</span> reposts
+              </Link>
+              <button
+                type="button"
+                onClick={() => setReposting(true)}
+                className="hover:text-primary"
+              >
+                Repostear
+              </button>
+            </div>
+            <ReactionBar postId={post.id} />
+          </>
+        )}
       </div>
 
-      {quoting && (
+      {!embedded && quoting && (
         <Modal onClose={() => setQuoting(false)}>
           <NewQuoteForm post={post} onClose={() => setQuoting(false)} />
         </Modal>
       )}
 
-      {reposting && (
+      {!embedded && reposting && (
         <Modal onClose={() => setReposting(false)}>
           <NewRepostForm post={post} onClose={() => setReposting(false)} />
         </Modal>
