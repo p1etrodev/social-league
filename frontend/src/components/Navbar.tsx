@@ -120,7 +120,7 @@ export function Navbar() {
           <span>Acerca de</span>
         </Link>
       </nav>
-      <nav className="fixed inset-x-0 bottom-0 flex justify-around border-t border-extra/20 bg-surface/90 py-2 backdrop-blur-sm sm:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t border-extra/20 bg-surface/90 py-2 backdrop-blur-sm sm:hidden">
         <Link href="/" className="p-2 text-primary-bright">
           {HOME_ICON}
         </Link>
