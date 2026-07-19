@@ -25,7 +25,7 @@ const SECTIONS = [
 
 export function AboutView() {
   return (
-    <div className="flex flex-1 flex-col gap-3 p-4">
+    <div className="flex flex-1 flex-col gap-3 p-4 pb-24 sm:pb-4">
       <div className="panel relative overflow-hidden p-6">
         <div className="absolute inset-x-4 top-0 h-0.5 bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
         <h1 className="font-heading text-2xl font-black text-primary">Acerca de Social League</h1>

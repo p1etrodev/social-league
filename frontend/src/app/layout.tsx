@@ -77,7 +77,7 @@ export default function RootLayout({
         <Providers>
           <div className="flex min-h-full flex-1 flex-row justify-center">
             <Navbar />
-            <main className="flex h-full min-w-[50%] flex-1 flex-col pb-28 sm:pb-0">{children}</main>
+            <main className="flex h-full min-w-[50%] flex-1 flex-col pb-16 sm:pb-0">{children}</main>
           </div>
           <Footer />
         </Providers>
