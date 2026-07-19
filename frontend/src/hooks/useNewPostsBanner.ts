@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { fetchPost, type PostList } from "@/lib/api";
+import type { PostList } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
 import { postsWsUrl } from "@/lib/ws";
 
@@ -10,9 +10,9 @@ type NewPostEvent = { event: string; postId: string };
 
 /**
  * Drives the "Mostrar N publicaciones nuevas" banner on the home feed.
- * `/ws/posts` broadcasts every new post/response/quote/repost, so each
- * event is resolved to a full post to check it's actually a root post
- * (the only kind the home feed shows) before counting it.
+ * `/ws/posts` broadcasts every new post/response/quote/repost -- the home
+ * feed now shows all of those (see HomeFeed's `includeResponses: true`),
+ * so every broadcast counts.
  *
  * When *we* create a post, the broadcast comes back over our own socket
  * too. The 500ms wait before checking the cache gives our own mutation's
@@ -20,6 +20,8 @@ type NewPostEvent = { event: string; postId: string };
  * optimistic id for the real one) time to land, so we don't show a "new
  * post" banner for a post we just published ourselves.
  */
+const HOME_FEED_PARAMS = { includeResponses: true };
+
 export function useNewPostsBanner() {
   const queryClient = useQueryClient();
   const [newCount, setNewCount] = useState(0);
@@ -32,23 +34,16 @@ export function useNewPostsBanner() {
     function connect() {
       socket = new WebSocket(postsWsUrl());
 
-      socket.onmessage = async (rawEvent) => {
+      socket.onmessage = (rawEvent) => {
         const message = JSON.parse(rawEvent.data) as NewPostEvent;
         if (message.event !== "new_post") return;
 
-        try {
-          const post = await fetchPost(message.postId);
-          if (cancelled || post.responseOf !== null) return;
-
-          setTimeout(() => {
-            if (cancelled) return;
-            const feed = queryClient.getQueryData<PostList>(queryKeys.posts.list());
-            if (feed?.posts.some((p) => p.id === message.postId)) return;
-            setNewCount((count) => count + 1);
-          }, 500);
-        } catch {
-          // Post may already be gone or the request raced a teardown; skip it.
-        }
+        setTimeout(() => {
+          if (cancelled) return;
+          const feed = queryClient.getQueryData<PostList>(queryKeys.posts.list(HOME_FEED_PARAMS));
+          if (feed?.posts.some((p) => p.id === message.postId)) return;
+          setNewCount((count) => count + 1);
+        }, 500);
       };
 
       socket.onclose = () => {
@@ -66,7 +61,7 @@ export function useNewPostsBanner() {
   }, [queryClient]);
 
   function showNewPosts() {
-    queryClient.invalidateQueries({ queryKey: queryKeys.posts.list() });
+    queryClient.invalidateQueries({ queryKey: queryKeys.posts.list(HOME_FEED_PARAMS) });
     setNewCount(0);
   }
 

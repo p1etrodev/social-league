@@ -21,6 +21,7 @@ export type PostList = {
 export type ListParams = {
   limit?: number;
   offset?: number;
+  includeResponses?: boolean;
 };
 
 export type NewPostInput = {

@@ -24,11 +24,14 @@ router = APIRouter(prefix="/api/v1/posts", tags=["posts"])
 @router.get("", response_model=PostListRead)
 async def list_posts(
     champion_id: str | None = Query(default=None, alias="championId"),
+    include_responses: bool = Query(default=False, alias="includeResponses"),
     limit: int = 50,
     offset: int = 0,
     db: AsyncSession = Depends(get_db),
 ):
-    posts, count = await crud.list_root_posts(db, champion_id, limit, offset)
+    posts, count = await crud.list_root_posts(
+        db, champion_id, limit, offset, include_responses=include_responses
+    )
     return {"posts": posts, "count": count}
 
 

@@ -9,7 +9,7 @@ import { PostCard } from "@/components/PostCard";
 import { StreakPanel } from "@/components/StreakPanel";
 
 export function HomeFeed() {
-  const { data, isLoading } = usePosts();
+  const { data, isLoading } = usePosts({ includeResponses: true });
   const { newCount, showNewPosts } = useNewPostsBanner();
   // The API orders oldest-first (append-friendly for the backend); the feed
   // wants newest-first, so we only flip the order for display.

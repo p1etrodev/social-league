@@ -76,10 +76,17 @@ async def get_post(db: AsyncSession, post_id: uuid.UUID) -> dict | None:
 
 
 async def list_root_posts(
-    db: AsyncSession, champion_id: str | None, limit: int, offset: int
+    db: AsyncSession,
+    champion_id: str | None,
+    limit: int,
+    offset: int,
+    include_responses: bool = False,
 ) -> tuple[list[dict], int]:
-    query = _select_posts().where(Post.response_of.is_(None))
-    count_query = select(func.count()).select_from(Post).where(Post.response_of.is_(None))
+    query = _select_posts()
+    count_query = select(func.count()).select_from(Post)
+    if not include_responses:
+        query = query.where(Post.response_of.is_(None))
+        count_query = count_query.where(Post.response_of.is_(None))
     if champion_id:
         query = query.where(Post.champion_id == champion_id)
         count_query = count_query.where(Post.champion_id == champion_id)

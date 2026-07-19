@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { championQueryOptions } from "@/hooks/useChampion";
-import { postQueryOptions } from "@/hooks/usePost";
-import type { Post } from "@/lib/api";
 import { relativeDate, toIdentifier } from "@/lib/format";
+
 import { ChampionIcon } from "./ChampionIcon";
+import Link from "next/link";
 import { Modal } from "./Modal";
 import { NewQuoteForm } from "./NewQuoteForm";
 import { NewRepostForm } from "./NewRepostForm";
+import type { Post } from "@/lib/api";
 import { ReactionBar } from "./ReactionBar";
+import { championQueryOptions } from "@/hooks/useChampion";
+import { postQueryOptions } from "@/hooks/usePost";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 type Props = {
   post: Post;
@@ -19,9 +20,13 @@ type Props = {
    * inside another card (a repost embed, or a quote/repost preview) so it
    * doesn't double up on background/border/shadow. */
   embedded?: boolean;
+  /** Skips the "Respuesta a: ..." banner -- for response lists already
+   * grouped under their parent post, where it would just repeat itself
+   * on every card. */
+  hideParentContext?: boolean;
 };
 
-export function PostCard({ post, embedded }: Props) {
+export function PostCard({ post, embedded, hideParentContext }: Props) {
   // Regular (non-suspense) query on purpose: a transient failure fetching
   // one card's champion shouldn't crash the whole feed via the error
   // boundary -- it just falls back to showing the raw championId.
@@ -37,17 +42,29 @@ export function PostCard({ post, embedded }: Props) {
     enabled: Boolean(post.repostOf),
   });
 
+  const { data: quoted } = useQuery({
+    ...postQueryOptions(post.quoteOf ?? ""),
+    enabled: Boolean(post.quoteOf),
+  });
+
+  const { data: respondedTo } = useQuery({
+    ...postQueryOptions(post.responseOf ?? ""),
+    enabled: Boolean(post.responseOf) && !embedded && !hideParentContext,
+  });
+
   if (post.repostOf) {
     if (!reposted) return null;
     return (
       <div className={embedded ? "" : "panel p-4"}>
         <div className="mb-2 flex items-center gap-2 text-sm text-muted">
-          <ChampionIcon
-            championId={post.championId}
-            alt={post.championId}
-            size={20}
-            className="size-5 rounded-full ring-2 ring-primary/40"
-          />
+          <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
+            <ChampionIcon
+              championId={post.championId}
+              alt={post.championId}
+              size={20}
+              className="scale-110 place-self-center"
+            />
+          </div>
           <span>{champion?.name ?? post.championId} reposteó</span>
           <span className="font-mono">· {relativeDate(post.createdAt)}</span>
         </div>
@@ -69,6 +86,11 @@ export function PostCard({ post, embedded }: Props) {
         />
       </Link>
       <div className="flex flex-1 flex-col gap-1">
+        {respondedTo && !hideParentContext && (
+          <Link href={`/post/${respondedTo.id}`} className="block text-sm text-muted">
+            Respuesta a: <span className="text-paper">{respondedTo.content}</span>
+          </Link>
+        )}
         <div className="flex flex-wrap items-baseline gap-2">
           <Link href={`/champions/${post.championId}`} className="font-bold text-paper">
             {champion?.name ?? post.championId}
@@ -79,6 +101,11 @@ export function PostCard({ post, embedded }: Props) {
         <Link href={`/post/${post.id}`}>
           <p className="text-paper">{post.content}</p>
         </Link>
+        {quoted && (
+          <div className="panel overflow-hidden">
+            <PostCard post={quoted} embedded />
+          </div>
+        )}
         <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted">
           <Link href={`/post/${post.id}`} className="hover:text-primary">
             <span className="font-mono">{post.responsesCount}</span> respuestas
