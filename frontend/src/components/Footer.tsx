@@ -1,7 +1,7 @@
 export function FooterCredit() {
   return (
-    <>
-      Made with ❤️ by{" "}
+    <span className="flex flex-row items-center gap-1">
+      <span>Made with ❤️ by</span>
       <a
         href="https://pietrodev.up.railway.app"
         target="_blank"
@@ -10,7 +10,7 @@ export function FooterCredit() {
       >
         pietrodev
       </a>
-    </>
+    </span>
   );
 }
 

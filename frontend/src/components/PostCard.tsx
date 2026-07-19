@@ -55,17 +55,27 @@ export function PostCard({ post, embedded, hideParentContext }: Props) {
   if (post.repostOf) {
     if (!reposted) return null;
     return (
-      <div className={embedded ? "" : "panel p-4"}>
+      <div className={`relative ${embedded ? "" : "panel p-4"}`}>
+        <Link
+          href={`/post/${post.id}`}
+          className="absolute inset-0 -z-10"
+          aria-label={`Ver repost de ${champion?.name ?? post.championId}`}
+        />
         <div className="mb-2 flex items-center gap-2 text-sm text-muted">
-          <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
-            <ChampionIcon
-              championId={post.championId}
-              alt={post.championId}
-              size={20}
-              className="scale-110 place-self-center"
-            />
-          </div>
-          <span>{champion?.name ?? post.championId} reposteó</span>
+          <Link href={`/champions/${post.championId}`} className="shrink-0">
+            <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
+              <ChampionIcon
+                championId={post.championId}
+                alt={post.championId}
+                size={20}
+                className="scale-110 place-self-center"
+              />
+            </div>
+          </Link>
+          <Link href={`/champions/${post.championId}`} className="hover:text-paper">
+            {champion?.name ?? post.championId}
+          </Link>
+          <span>reposteó</span>
           <span className="font-mono">· {relativeDate(post.createdAt)}</span>
         </div>
         <div className="panel overflow-hidden">
@@ -76,7 +86,12 @@ export function PostCard({ post, embedded, hideParentContext }: Props) {
   }
 
   return (
-    <article className={`flex gap-3 p-4 ${embedded ? "" : "panel panel-hover"}`}>
+    <article className={`relative flex gap-3 p-4 ${embedded ? "" : "panel panel-hover"}`}>
+      <Link
+        href={`/post/${post.id}`}
+        className="absolute inset-0 -z-10"
+        aria-label={`Ver post de ${champion?.name ?? post.championId}`}
+      />
       <Link href={`/champions/${post.championId}`} className="shrink-0">
         <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
           <ChampionIcon
