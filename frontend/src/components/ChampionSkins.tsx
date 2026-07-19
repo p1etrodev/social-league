@@ -17,7 +17,7 @@ export function ChampionSkins({ championId, skins }: { championId: string; skins
   const [loaded, setLoaded] = useState<Set<number>>(new Set());
   const [selected, setSelected] = useState<Skin | null>(null);
 
-  const visibleSkins = allSkins.filter((skin) => !!loaded.has(skin.num));
+  const visibleSkins = allSkins.filter((skin) => !failed.has(skin.num));
 
   function markFailed(num: number) {
     setFailed((prev) => new Set(prev).add(num));
