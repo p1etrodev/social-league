@@ -5,6 +5,7 @@ import { siteDescription, siteName, siteUrl } from "@/lib/site";
 
 import type { Metadata } from "next";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { Providers } from "./providers";
 
 const cinzel = Cinzel({
@@ -76,13 +77,9 @@ export default function RootLayout({
         <Providers>
           <div className="flex min-h-full flex-1 flex-row justify-center">
             <Navbar />
-            <main className="flex h-full min-w-[50%] flex-1 flex-col pb-16 sm:pb-0">
-              {children}
-              <footer className="p-4 text-center text-xs text-muted">
-                Made with ❤️ by pietrito
-              </footer>
-            </main>
+            <main className="flex h-full min-w-[50%] flex-1 flex-col pb-28 sm:pb-0">{children}</main>
           </div>
+          <Footer />
         </Providers>
       </body>
     </html>
