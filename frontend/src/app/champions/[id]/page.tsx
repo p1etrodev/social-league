@@ -43,7 +43,7 @@ export default async function ChampionProfilePage({ params }: Props) {
   // "Publicaciones" is the tab that's active by default, so it's the only
   // one worth prefetching here -- responses/skins/skills only get fetched
   // once the user actually clicks into them.
-  await queryClient.prefetchQuery(championPostsQueryOptions(id));
+  await queryClient.prefetchInfiniteQuery(championPostsQueryOptions(id));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

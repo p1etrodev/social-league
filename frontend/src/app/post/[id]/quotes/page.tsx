@@ -39,7 +39,7 @@ export default async function PostQuotesPage({ params }: Props) {
     throw error;
   }
 
-  await queryClient.prefetchQuery(postQuotesQueryOptions(id));
+  await queryClient.prefetchInfiniteQuery(postQuotesQueryOptions(id));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

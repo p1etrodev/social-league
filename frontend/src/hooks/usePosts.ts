@@ -1,14 +1,15 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
 import { fetchPosts, type ListParams } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
+import { infinitePostsQueryOptions, useInfinitePosts } from "./useInfinitePosts";
 
-export function postsQueryOptions(params?: ListParams & { championId?: string }) {
-  return queryOptions({
-    queryKey: queryKeys.posts.list(params),
-    queryFn: () => fetchPosts(params),
-  });
+type Params = Omit<ListParams, "limit" | "offset"> & { championId?: string };
+
+export function postsQueryOptions(params?: Params) {
+  return infinitePostsQueryOptions(queryKeys.posts.list(params), (page) =>
+    fetchPosts({ ...params, ...page }),
+  );
 }
 
-export function usePosts(params?: ListParams & { championId?: string }) {
-  return useQuery(postsQueryOptions(params));
+export function usePosts(params?: Params) {
+  return useInfinitePosts(queryKeys.posts.list(params), (page) => fetchPosts({ ...params, ...page }));
 }

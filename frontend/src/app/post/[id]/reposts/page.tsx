@@ -39,7 +39,7 @@ export default async function PostRepostsPage({ params }: Props) {
     throw error;
   }
 
-  await queryClient.prefetchQuery(postRepostsQueryOptions(id));
+  await queryClient.prefetchInfiniteQuery(postRepostsQueryOptions(id));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

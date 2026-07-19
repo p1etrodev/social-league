@@ -1,4 +1,10 @@
+import uuid
+from datetime import datetime, timedelta, timezone
+
 import pytest
+from sqlalchemy import update
+
+from app.models import Post
 
 
 async def _create_post(client, champion_id="ahri", content="hola mundo"):
@@ -93,13 +99,23 @@ async def test_list_posts_filters_by_champion(client):
     assert body["posts"][0]["championId"] == "ahri"
 
 
-async def test_list_posts_orders_by_created_at_ascending(client):
+async def test_list_posts_orders_by_created_at_descending(client, db_session):
     first = await _create_post(client, content="first")
     second = await _create_post(client, content="second")
 
+    # SQLite's CURRENT_TIMESTAMP only has second-level resolution, so two
+    # posts created back-to-back in a fast test can tie -- force a real gap
+    # so this assertion exercises the ordering instead of being flaky.
+    await db_session.execute(
+        update(Post)
+        .where(Post.id == uuid.UUID(second["id"]))
+        .values(created_at=datetime.now(timezone.utc) + timedelta(seconds=1))
+    )
+    await db_session.commit()
+
     r = await client.get("/api/v1/posts")
     ids = [p["id"] for p in r.json()["posts"]]
-    assert ids == [first["id"], second["id"]]
+    assert ids == [second["id"], first["id"]]
 
 
 async def test_list_posts_pagination(client):

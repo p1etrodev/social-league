@@ -1,4 +1,4 @@
-import type { QueryClient, QueryKey } from "@tanstack/react-query";
+import type { InfiniteData, QueryClient, QueryKey } from "@tanstack/react-query";
 import type { NewPostInput, Post, PostList } from "./api";
 
 export function buildOptimisticPost(
@@ -19,11 +19,13 @@ export function buildOptimisticPost(
   };
 }
 
-type ListSnapshot = [QueryKey, PostList | undefined][];
+type InfinitePostList = InfiniteData<PostList>;
+type ListSnapshot = [QueryKey, InfinitePostList | undefined][];
 
-/** Snapshot every cached list matching a key prefix, for rollback on error. */
+/** Snapshot every cached (infinite) list matching a key prefix, for rollback
+ * on error. */
 export function snapshotLists(queryClient: QueryClient, keyPrefix: QueryKey): ListSnapshot {
-  return queryClient.getQueriesData<PostList>({ queryKey: keyPrefix });
+  return queryClient.getQueriesData<InfinitePostList>({ queryKey: keyPrefix });
 }
 
 export function restoreLists(queryClient: QueryClient, snapshot: ListSnapshot) {
@@ -33,11 +35,11 @@ export function restoreLists(queryClient: QueryClient, snapshot: ListSnapshot) {
 }
 
 /**
- * Append an optimistic post to every snapshotted list, unless `shouldInclude`
- * rejects it (used to skip filtered lists the post wouldn't actually appear
- * in, e.g. a champion-filtered feed for a different champion). Appended, not
- * prepended, because every list endpoint on the backend orders by
- * created_at ascending.
+ * Prepend an optimistic post to every snapshotted list's first page, unless
+ * `shouldInclude` rejects it (used to skip filtered lists the post wouldn't
+ * actually appear in, e.g. a champion-filtered feed for a different
+ * champion). Prepended, not appended, because every list endpoint on the
+ * backend orders by created_at descending (newest first).
  */
 export function appendToLists(
   queryClient: QueryClient,
@@ -47,8 +49,16 @@ export function appendToLists(
 ) {
   for (const [key] of snapshot) {
     if (!shouldInclude(key)) continue;
-    queryClient.setQueryData<PostList>(key, (current) =>
-      current ? { posts: [...current.posts, post], count: current.count + 1 } : current,
-    );
+    queryClient.setQueryData<InfinitePostList>(key, (current) => {
+      if (!current) return current;
+      const [firstPage, ...restPages] = current.pages;
+      return {
+        ...current,
+        pages: [
+          { posts: [post, ...firstPage.posts], count: firstPage.count + 1 },
+          ...restPages,
+        ],
+      };
+    });
   }
 }

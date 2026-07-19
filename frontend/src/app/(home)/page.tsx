@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default async function Home() {
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(postsQueryOptions());
+  await queryClient.prefetchInfiniteQuery(postsQueryOptions({ includeResponses: true }));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

@@ -1,19 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { useChampion } from "@/hooks/useChampion";
-import { useChampionPosts } from "@/hooks/useChampionPosts";
-import { useChampionResponses } from "@/hooks/useChampionResponses";
 import { championLoadingUrl, championSplashUrl } from "@/lib/data-dragon";
-import { toIdentifier } from "@/lib/format";
-import { tagLabel } from "@/lib/tags";
+
+import { ChampionSkins } from "@/components/ChampionSkins";
+import { ChampionSpells } from "@/components/ChampionSpells";
 import { EmptyState } from "@/components/EmptyState";
+import Image from "next/image";
+import { InfiniteScrollSentinel } from "@/components/InfiniteScrollSentinel";
 import { Loading } from "@/components/Loading";
 import { PostCard } from "@/components/PostCard";
 import { StatRating } from "@/components/StatRating";
-import { ChampionSkins } from "@/components/ChampionSkins";
-import { ChampionSpells } from "@/components/ChampionSpells";
+import { flattenPosts } from "@/hooks/useInfinitePosts";
+import { tagLabel } from "@/lib/tags";
+import { toIdentifier } from "@/lib/format";
+import { useChampion } from "@/hooks/useChampion";
+import { useChampionPosts } from "@/hooks/useChampionPosts";
+import { useChampionResponses } from "@/hooks/useChampionResponses";
+import { useState } from "react";
 
 const TABS = [
   { key: "posts", label: "Publicaciones" },
@@ -25,23 +28,49 @@ const TABS = [
 type Tab = (typeof TABS)[number]["key"];
 
 function PostsTab({ championId }: { championId: string }) {
-  const { data, isLoading } = useChampionPosts(championId);
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useChampionPosts(championId);
+  const posts = flattenPosts(data);
   if (isLoading) return <Loading />;
-  if (data?.posts.length === 0) {
+  if (posts.length === 0) {
     return <EmptyState title="Sin publicaciones" message="Todavía no tiene publicaciones." />;
   }
-  return data?.posts.map((post) => <PostCard key={post.id} post={post} />);
+  return (
+    <>
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
+      {isFetchingNextPage && <Loading />}
+      <InfiniteScrollSentinel
+        onIntersect={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetchingNextPage}
+      />
+    </>
+  );
 }
 
 function ResponsesTab({ championId }: { championId: string }) {
-  const { data, isLoading } = useChampionResponses(championId);
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useChampionResponses(championId);
+  const responses = flattenPosts(data);
   if (isLoading) return <Loading />;
-  if (data?.posts.length === 0) {
+  if (responses.length === 0) {
     return (
       <EmptyState title="Sin respuestas" message="Todavía no respondió a ninguna publicación." />
     );
   }
-  return data?.posts.map((response) => <PostCard key={response.id} post={response} />);
+  return (
+    <>
+      {responses.map((response) => (
+        <PostCard key={response.id} post={response} />
+      ))}
+      {isFetchingNextPage && <Loading />}
+      <InfiniteScrollSentinel
+        onIntersect={() => fetchNextPage()}
+        disabled={!hasNextPage || isFetchingNextPage}
+      />
+    </>
+  );
 }
 
 export function ChampionView({ id }: { id: string }) {

@@ -91,7 +91,7 @@ async def list_root_posts(
         query = query.where(Post.champion_id == champion_id)
         count_query = count_query.where(Post.champion_id == champion_id)
 
-    query = query.order_by(Post.created_at.asc()).limit(limit).offset(offset)
+    query = query.order_by(Post.created_at.desc()).limit(limit).offset(offset)
     rows = (await db.execute(query)).all()
     count = (await db.execute(count_query)).scalar_one()
     return [_row_to_dict(r) for r in rows], count
@@ -114,7 +114,7 @@ async def list_responses(
         query = query.where(Post.champion_id == champion_id)
         count_query = count_query.where(Post.champion_id == champion_id)
 
-    query = query.order_by(Post.created_at.asc()).limit(limit).offset(offset)
+    query = query.order_by(Post.created_at.desc()).limit(limit).offset(offset)
     rows = (await db.execute(query)).all()
     count = (await db.execute(count_query)).scalar_one()
     return [_row_to_dict(r) for r in rows], count
@@ -137,7 +137,7 @@ async def list_quotes(
         query = query.where(Post.champion_id == champion_id)
         count_query = count_query.where(Post.champion_id == champion_id)
 
-    query = query.order_by(Post.created_at.asc()).limit(limit).offset(offset)
+    query = query.order_by(Post.created_at.desc()).limit(limit).offset(offset)
     rows = (await db.execute(query)).all()
     count = (await db.execute(count_query)).scalar_one()
     return [_row_to_dict(r) for r in rows], count
@@ -160,7 +160,7 @@ async def list_reposts(
         query = query.where(Post.champion_id == champion_id)
         count_query = count_query.where(Post.champion_id == champion_id)
 
-    query = query.order_by(Post.created_at.asc()).limit(limit).offset(offset)
+    query = query.order_by(Post.created_at.desc()).limit(limit).offset(offset)
     rows = (await db.execute(query)).all()
     count = (await db.execute(count_query)).scalar_one()
     return [_row_to_dict(r) for r in rows], count

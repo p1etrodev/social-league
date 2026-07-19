@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import type { PostList } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
 import { postsWsUrl } from "@/lib/ws";
@@ -40,8 +40,10 @@ export function useNewPostsBanner() {
 
         setTimeout(() => {
           if (cancelled) return;
-          const feed = queryClient.getQueryData<PostList>(queryKeys.posts.list(HOME_FEED_PARAMS));
-          if (feed?.posts.some((p) => p.id === message.postId)) return;
+          const feed = queryClient.getQueryData<InfiniteData<PostList>>(
+            queryKeys.posts.list(HOME_FEED_PARAMS),
+          );
+          if (feed?.pages.some((page) => page.posts.some((p) => p.id === message.postId))) return;
           setNewCount((count) => count + 1);
         }, 500);
       };
