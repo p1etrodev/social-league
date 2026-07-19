@@ -3,6 +3,11 @@ import { siteUrl } from "@/lib/site";
 import { fetchChampions } from "@/lib/data-dragon";
 import { fetchPosts, type Post } from "@/lib/api";
 
+// Fetches from the backend API, which isn't reachable during `next build`
+// in production (the build stage has no running backend to talk to) --
+// render this on request instead of trying to statically generate it.
+export const dynamic = "force-dynamic";
+
 const POST_PAGE_SIZE = 100;
 
 /** Root posts only (quotes/reposts are standalone root posts too, so this

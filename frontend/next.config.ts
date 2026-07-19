@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.join(__dirname),
   },
+  // Traces the minimal set of files/node_modules a production server
+  // needs into .next/standalone -- the production Dockerfile runs that
+  // instead of a full `next start` + node_modules image.
+  output: "standalone",
   images: {
     remotePatterns: [new URL("https://ddragon.leagueoflegends.com/cdn/**")],
   },
