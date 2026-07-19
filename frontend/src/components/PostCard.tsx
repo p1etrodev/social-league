@@ -78,12 +78,14 @@ export function PostCard({ post, embedded, hideParentContext }: Props) {
   return (
     <article className={`flex gap-3 p-4 ${embedded ? "" : "panel panel-hover"}`}>
       <Link href={`/champions/${post.championId}`} className="shrink-0">
-        <ChampionIcon
-          championId={post.championId}
-          alt={post.championId}
-          size={48}
-          className="size-12 rounded-full ring-2 ring-primary/40"
-        />
+        <div className="grid ring-2 ring-primary/30 rounded-full overflow-hidden">
+          <ChampionIcon
+            championId={post.championId}
+            alt={post.championId}
+            size={48}
+            className="scale-110 place-self-center"
+          />
+        </div>
       </Link>
       <div className="flex flex-1 flex-col gap-1">
         {respondedTo && !hideParentContext && (
@@ -95,9 +97,9 @@ export function PostCard({ post, embedded, hideParentContext }: Props) {
           <Link href={`/champions/${post.championId}`} className="font-bold text-paper">
             {champion?.name ?? post.championId}
           </Link>
-          {champion && <span className="text-sm text-muted">{toIdentifier(champion.title)}</span>}
           <span className="font-mono text-sm text-muted">· {relativeDate(post.createdAt)}</span>
         </div>
+        {champion && <span className="text-sm text-muted">{toIdentifier(champion.title)}</span>}
         <Link href={`/post/${post.id}`}>
           <p className="text-paper">{post.content}</p>
         </Link>
