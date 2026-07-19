@@ -1,6 +1,6 @@
-import { isAxiosError } from "axios";
-import { ddragonClient } from "./axios";
 import { NotFoundError } from "./errors";
+import { ddragonClient } from "./axios";
+import { isAxiosError } from "axios";
 
 export type ChampionSummary = {
   id: string;
@@ -21,8 +21,8 @@ export type ChampionDetail = ChampionSummary & {
   lore: string;
   passive: Spell;
   spells: Spell[];
-  /** Skin numbers, excluding the default skin (0). */
-  skins: number[];
+  /** Skins, excluding the default skin (0). */
+  skins: { num: number; name: string; parentSkin?: number }[];
 };
 
 export async function fetchLatestVersion(): Promise<string> {
@@ -59,7 +59,10 @@ export async function fetchChampion(championId: string): Promise<ChampionDetail>
     throw new NotFoundError(`Champion ${championId} not found in Data Dragon ${version}`);
   }
 
-  const skins = (champion.skins as { num: number }[] | undefined) ?? [];
+  const skins =
+    (champion.skins as { num: number; name: string; parentSkin?: number }[] | undefined) ?? [];
+
+  const mainSkins = skins.filter((s) => !s.parentSkin);
 
   return {
     id: champion.id as string,
@@ -71,7 +74,7 @@ export async function fetchChampion(championId: string): Promise<ChampionDetail>
     lore: champion.lore as string,
     passive: champion.passive as Spell,
     spells: champion.spells as Spell[],
-    skins: skins.slice(1).map((skin) => skin.num),
+    skins: mainSkins.slice(1).map((skin) => ({ num: skin.num, name: skin.name })),
   };
 }
 
