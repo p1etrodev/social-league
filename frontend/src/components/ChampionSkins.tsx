@@ -14,12 +14,17 @@ export function ChampionSkins({ championId, skins }: { championId: string; skins
   // no corresponding splash art on the legacy (unversioned) CDN path --
   // hide those instead of showing a broken image.
   const [failed, setFailed] = useState<Set<number>>(new Set());
+  const [loaded, setLoaded] = useState<Set<number>>(new Set());
   const [selected, setSelected] = useState<Skin | null>(null);
 
-  const visibleSkins = allSkins.filter((skin) => !failed.has(skin.num));
+  const visibleSkins = allSkins.filter((skin) => !!loaded.has(skin.num));
 
   function markFailed(num: number) {
     setFailed((prev) => new Set(prev).add(num));
+  }
+
+  function markLoaded(num: number) {
+    setLoaded((prev) => new Set(prev).add(num));
   }
 
   if (visibleSkins.length === 0) return null;
@@ -39,8 +44,9 @@ export function ChampionSkins({ championId, skins }: { championId: string; skins
                 src={championSplashUrl(championId, skin.num)}
                 alt={skin.name}
                 fill
-                className="object-cover"
+                className={`object-cover transition-opacity ${loaded.has(skin.num) ? "opacity-100" : "opacity-0"}`}
                 sizes="120px"
+                onLoad={() => markLoaded(skin.num)}
                 onError={() => markFailed(skin.num)}
               />
             </div>
