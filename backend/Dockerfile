@@ -24,5 +24,7 @@ ENV PATH="/home/appuser/.local/bin:${PATH}" \
 EXPOSE 8000
 
 # Shell form so $PORT expands -- hosting platforms (Railway, Render, ...)
-# assign a dynamic port at runtime and route traffic to it.
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 4
+# assign a dynamic port at runtime and route traffic to it. Migrations run
+# here (not as a separate deploy step) so the schema is never out of sync
+# with what a fresh container expects.
+CMD alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 4

@@ -15,7 +15,7 @@ docker compose up --build
 Levanta Postgres + la API con hot-reload (bind mount del código, `uvicorn --reload`). Corre `alembic upgrade head` automáticamente al arrancar. API en `http://localhost:8000`, Postgres expuesto en `localhost:5432` (user/pass/db: `postgres`/`postgres`/`social_league`).
 
 - `Dockerfile.dev`: imagen de desarrollo, monta el código como volumen, reload automático.
-- `Dockerfile`: build multi-stage para producción, corre como usuario no-root (`appuser`), `uvicorn` con 4 workers y sin `--reload`. Se buildea con `docker build -f Dockerfile -t social-league-api .` y espera `DATABASE_URL` por variable de entorno (no corre migraciones automáticamente — eso debe ser un paso explícito del deploy, `alembic upgrade head`, antes de levantar el contenedor).
+- `Dockerfile`: build multi-stage para producción, corre como usuario no-root (`appuser`), `uvicorn` con 4 workers y sin `--reload`. Se buildea con `docker build -f Dockerfile -t social-league-api .` y espera `DATABASE_URL` por variable de entorno. Corre `alembic upgrade head` al arrancar el contenedor, antes de levantar `uvicorn` (con un solo replica -- si se escala a más de un contenedor, correr las migraciones concurrentemente puede pisarse).
 
 ## Setup local sin Docker
 
